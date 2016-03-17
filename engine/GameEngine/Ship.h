@@ -21,7 +21,7 @@ public:
     
     Ship()
     {
-		translation = Matrix::CreateTranslation(0, 0, 0);
+//		translation = Matrix::CreateTranslation(0, 0, 0);
 		rotation = Matrix::CreateRotation(0, 0, 0);
 		acceleration = Vector4(0, 0, 0, 0);
 		velocity = Vector4(0, 0, 0, 0);
@@ -48,7 +48,7 @@ private:
     Material* m_material;
 
 	Matrix rotation;
-	Matrix translation;
+	//Matrix translation;
 	Vector4 acceleration;
 	Vector4 velocity;
 	float angleVelocity;

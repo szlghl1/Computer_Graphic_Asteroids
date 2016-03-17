@@ -54,9 +54,12 @@ void Matrix::CreateRotationX(Matrix& m, float radians)
 
 void Matrix::CreateRotationY(Matrix& m, float radian)
 {
-	m.m00 = cos(radian);
+	float cosTheta = cos(radian);
+	float sinTheta = sin(radian);
+
+	m.m00 = cosTheta;
 	m.m01 = 0;
-	m.m02 = -sin(radian);
+	m.m02 = -sinTheta;
 	m.m03 = 0;
 
 	m.m10 = 0;
@@ -64,9 +67,9 @@ void Matrix::CreateRotationY(Matrix& m, float radian)
 	m.m12 = 0;
 	m.m13 = 0;
 
-	m.m20 = sin(radian);
+	m.m20 = sinTheta;
 	m.m21 = 0;
-	m.m22 = cos(radian);
+	m.m22 = cosTheta;
 	m.m23 = 0;
 
 	m.m30 = 0;
@@ -77,13 +80,16 @@ void Matrix::CreateRotationY(Matrix& m, float radian)
 
 void Matrix::CreateRotationZ(Matrix& m, float radian)
 {
-	m.m00 = cos(radian);
-	m.m01 = -sin(radian);
+	float cosTheta = cos(radian);
+	float sinTheta = sin(radian);
+
+	m.m00 = cosTheta;
+	m.m01 = -sinTheta;
 	m.m02 = 0;
 	m.m03 = 0;
 
-	m.m10 = sin(radian);
-	m.m11 = cos(radian);
+	m.m10 = sinTheta;
+	m.m11 = cosTheta;
 	m.m12 = 0;
 	m.m13 = 0;
 
@@ -140,7 +146,6 @@ Matrix Matrix::CreateRotation(float x, float y, float z)
 Matrix Matrix::CreateRotation(const Vector3& rotate)
 {
 	return CreateRotationZ(rotate.Z) * CreateRotationY(rotate.Y) * CreateRotationX(rotate.X);
-    
 }
 
 
@@ -175,18 +180,6 @@ Matrix Matrix::CreateTranslation(const Vector3& position)
 {
     return CreateTranslation(position.X, position.Y, position.Z);
 }
-
-Matrix Matrix::CreateRowMajorTranslation(const Vector3& position)
-{    
-    Matrix m;
-    
-    m.m30 = position.X;
-    m.m31 = position.Y;
-    m.m32 = position.Z;
-    
-    return m;
-}
-
 
 Matrix Matrix::CreateScale(float x, float y, float z)
 {
@@ -275,23 +268,14 @@ Matrix Matrix::CreatePerspective(float fov, float aspect, float zNear, float zFa
     m.m00 = zNear / halfWidth;
     m.m11 = zNear / halfHeight;
     m.m22 = -(zFar + zNear) / depth;
-    m.m23 = -1;
-    m.m32 = -2 * zFar * zNear / depth;
+    //m.m23 = -1;
+    //m.m32 = -2 * zFar * zNear / depth;
+    m.m32 = -1;
+    m.m23 = -2 * zFar * zNear / depth;
     m.m33 = 0;
     
     return m;
 }
-// 4*4 matriX * 1*4 vector
-Vector4 operator* (Matrix m, Vector4 v)
-{
-	Vector4 result;
-	result.X = m.m00 * v.X + m.m01 * v.Y + m.m02 * v.Z + m.m03 * v.W;
-	result.Y = m.m10 * v.X + m.m11 * v.Y + m.m12 * v.Z + m.m13 * v.W;
-	result.Z = m.m20 * v.X + m.m21 * v.Y + m.m22 * v.Z + m.m23 * v.W;
-	result.W = m.m30 * v.X + m.m31 * v.Y + m.m32 * v.Z + m.m33 * v.W;
-	return result;
-}
-
 
 Vector4 operator* (Vector4 v, float m)
 {
@@ -301,16 +285,6 @@ Vector4 operator* (Vector4 v, float m)
     result.Z = v.Z * m;
     //result.W *= m;
 	return result;
-}
-
-Vector4 operator+ (Vector4 v1, Vector4 v2)
-{
-    Vector4 result;
-    result.X = v1.X + v2.X;
-    result.Y = v1.Y + v2.Y;
-    result.Z = v1.Z + v2.Z;
-    //result.W = v1.W + v2.W;
-    return result;
 }
 
 

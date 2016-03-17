@@ -34,8 +34,8 @@ Matrix& Camera::GetViewMatrix()
     auto t = Transform.Translation * -1.f;
     auto r = Transform.Rotation * -1.f;
     
-    m_viewMatrix = Matrix::CreateRotation(r) * Matrix::CreateRowMajorTranslation(t);
-    
+    m_viewMatrix = Matrix::CreateRotation(r) * Matrix::CreateTranslation(t);
+
     return m_viewMatrix;
     
 }

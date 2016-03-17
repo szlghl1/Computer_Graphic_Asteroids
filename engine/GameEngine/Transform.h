@@ -32,7 +32,7 @@ public:
         auto mr = Matrix::CreateRotation(Rotation);
         auto ms = Matrix::CreateScale(Scale);
         
-        auto result = mr * mt * ms;
+        auto result = mt * mr * ms;
         
         return result;
     }

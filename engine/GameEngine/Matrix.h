@@ -14,7 +14,7 @@
 class Matrix
 {
 public:
-	
+	/*
     /// X basis vector
     float m00, m01, m02, m03;
     /// y basis vector
@@ -23,8 +23,8 @@ public:
     float m20, m21, m22, m23;
     /// translation
     float m30, m31, m32, m33;
-
-    /*
+	*/
+    
     /// X basis vector
 	float m00, m10, m20, m30;
 	/// y basis vector
@@ -33,7 +33,7 @@ public:
 	float m02, m12, m22, m32;
 	/// translation
 	float m03, m13, m23, m33;
-*/
+
     
     Matrix() :
     m00(1), m01(0), m02(0), m03(0)
@@ -89,9 +89,8 @@ public:
     
 private:
 };
-extern Vector4 operator* (Matrix m, Vector4 v);// 4*4 matrix * 1*4 vector
+
 extern Vector4 operator* (Vector4 v, float m);
-extern Vector4 operator+ (Vector4 v1, Vector4 v2);
 
 #endif /* Matrix_hpp */
 

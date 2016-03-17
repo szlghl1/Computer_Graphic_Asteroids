@@ -83,50 +83,29 @@ void Ship::OnUpdate(const GameTime& time)
 	//translation.m03 += dX.X;
 	//translation.m13 += dX.Y;
 	//translation.m23 += dX.Z;
-	translation.m30 -= dX.X;
-	translation.m31 += dX.Y;
-	translation.m32 += dX.Z;
-	rotation = Matrix::CreateRotationZ(angleRadian);
+	auto& translation = this->Transform.Translation;
+	translation.X += dX.X;
+	translation.Y += dX.Y;
+	translation.Z += dX.Z;
 
-	if (translation.m30 < leftBound)
-	{
-		translation.m30 = rightBound;
-	}
-	if (translation.m30 > rightBound)
-	{
-		translation.m30 = leftBound;
-	}
-	if (translation.m31 > upBound)
-	{
-		translation.m31 = bottomBound;
-	}
-	if (translation.m31 < bottomBound)
-	{
-		translation.m31 = upBound;
-	}
-	
-	
-	/*
-	Vector4 aVec = Vector4(0, 0.5, 0, 1);
-	Vector4 bVec = Vector4(1 / 3.f, -0.5f, 0.f,1.0f);
-	Vector4 cVec = Vector4(-1.3f, -0.5f, 0.f, 1.0f);
+	this->Transform.Rotation.Z = angleRadian;
 
-	aVec = rotation * aVec;
-	aVec = translation * aVec;
-	bVec = rotation * bVec;
-	bVec = translation * bVec;
-	cVec = rotation * cVec;
-	cVec = translation * cVec;
-	center = rotation * center;
-	center = translation * center;
-	
-	vertices =
-	{aVec.X,aVec.Y,aVec.Z,bVec.X,bVec.Y,bVec.Z,cVec.X,cVec.Y,cVec.Z};
-	
-	indices = { 0,1,2 };
-
-	m_mesh -> Initialize(vertices, indices);
-	*/
+	if (translation.X < leftBound)
+	{
+		translation.X = rightBound;
+	}
+	if (translation.X > rightBound)
+	{
+		translation.X = leftBound;
+	}
+	if (translation.Y > upBound)
+	{
+		translation.Y = bottomBound;
+	}
+	if (translation.Y < bottomBound)
+	{
+		translation.Y = upBound;
+	}
 
 }
 
@@ -139,8 +118,6 @@ void Ship::OnRender(const GameTime& time)
 	m_material->SetUniform("World", Transform.GetMatrix());
     m_material->SetUniform("View",cam.GetViewMatrix());
     m_material->SetUniform("Projection",cam.GetProjectionMatrix());
-	m_material->SetUniform("translation", translation);
-	m_material->SetUniform("rotation", rotation);
 }
 
 void Ship::ProcessInput()
@@ -150,6 +127,19 @@ void Ship::ProcessInput()
     auto* window = Game::Instance().Window();
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
+		if (angleRadian <= 2 * pi)
+		{
+			angleRadian += 0.01f;
+		}
+		else
+		{
+			angleRadian = 0;
+		}
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+
 		if (angleRadian >= 0)
 		{
 			angleRadian -= 0.01f;
@@ -157,19 +147,6 @@ void Ship::ProcessInput()
 		else
 		{
 			angleRadian = 2 * pi;
-		}
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-    {
-
-		if (angleRadian <= 2 * pi)
-		{
-			angleRadian += 0.01f;
-		}
-		else
-		{
-			angleRadian = 0.0f;
 		}
     }
 
@@ -195,19 +172,6 @@ void Ship::ProcessInput()
 			velocity.Y = 0;
 		}
 	}
-	/*
-	else if(abs(velocity.X) + abs(velocity.Y) + abs(velocity.Z) < 0.01)
-	{
-		velocity.X = 0;
-		velocity.Y = 0;
-		velocity.Z = 0;
-	}
-	
-	else
-	{
-		acceleration.X = 0.001 * sin(angleVelocity);
-		acceleration.Y = -0.001 * cos(angleVelocity);
-	}*/
     
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
