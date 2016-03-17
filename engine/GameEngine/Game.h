@@ -47,6 +47,7 @@ private:
     bool m_isInitialized;
 
     void Shutdown();
+
 protected:
 
 	GLFWwindow* m_window;

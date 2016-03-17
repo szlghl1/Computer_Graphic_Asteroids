@@ -27,14 +27,21 @@ public:
 	std::string ShaderFolder;
     
     Ship& CreateShip();
+	Asteroid& CreateAsteroid();
 
-	//bool Run() override;
 	void ProcessInput() override;
-	void DoUpdate(const GameTime& time);
+	void OnUpdate(const GameTime& time) override;
     
 private:
 	Ship *shipInstance;
-    
+	Asteroid *asteroidInstance;
+
+	const float upBound = 8;
+	const float bottomBound = -8;
+	const float leftBound = -15;
+	const float rightBound = 15;
+
+	static void window_size_callback(GLFWwindow* window, int width, int height);
 };
 
 

@@ -16,8 +16,6 @@
 #include <cmath>
 #include <iostream>
 
-using namespace std;
-
 bool Ship::OnInitialize()
 {	
     auto& mesh = Create<Mesh>("ship-mesh");
@@ -90,22 +88,7 @@ void Ship::OnUpdate(const GameTime& time)
 
 	this->Transform.Rotation.Z = angleRadian;
 
-	if (translation.X < leftBound)
-	{
-		translation.X = rightBound;
-	}
-	if (translation.X > rightBound)
-	{
-		translation.X = leftBound;
-	}
-	if (translation.Y > upBound)
-	{
-		translation.Y = bottomBound;
-	}
-	if (translation.Y < bottomBound)
-	{
-		translation.Y = upBound;
-	}
+	//wrapping figure is implemented in AsteroidsGame::OnUpdate()
 
 }
 

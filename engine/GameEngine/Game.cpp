@@ -107,7 +107,6 @@ bool Game::Run()
     
     GameTime time;
 
-    
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_window))
     {
