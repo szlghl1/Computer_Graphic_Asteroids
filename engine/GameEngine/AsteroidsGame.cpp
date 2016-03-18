@@ -67,20 +67,28 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 	********************************************************/
 	float halfH = Camera.ZNear * tan(Camera.FieldOfView / 2);
 	float halfW = halfH * Camera.Aspect;
-	Vector3 a = Vector3(-halfW, halfH, Camera.ZNear);
-	Vector3 b = Vector3(halfW, halfH, Camera.ZNear);
-	Vector3 c = Vector3(-halfW, -halfH, Camera.ZNear);
-	Vector3 d = Vector3(halfW, -halfH, Camera.ZNear);
+	//in OpenGL the direction of camera is inverse, because OpenGL can only recieve positive ZNear ZFar
+	Vector3 a = Vector3(-halfW, halfH, -Camera.ZNear);
+	Vector3 b = Vector3(halfW, halfH, -Camera.ZNear);
+	Vector3 c = Vector3(-halfW, -halfH, -Camera.ZNear);
+	Vector3 d = Vector3(halfW, -halfH, -Camera.ZNear);
 
 	//get the normal vector by cross product
 	//(a2b3-a3b2),(a3b1-a1b3),(a1b2-a2b1)
+	//note: cross product is not commutative
+
+	// a * b
 	Vector3 nab = Vector3(a.Y*b.Z - a.Z*b.Y, a.Z*b.X - a.X*b.Z, a.X*b.Y - a.Y*b.X);
-	Vector3 ncd = Vector3(c.Y*d.Z - c.Z*d.Y, c.Z*d.X - c.X*d.Z, c.X*d.Y - c.Y*d.X);
-	Vector3 nac = Vector3(a.Y*c.Z - a.Z*c.Y, a.Z*c.X - a.X*c.Z, a.X*c.Y - a.Y*c.X);
+	// d * c
+	Vector3 ncd = Vector3(d.Y*c.Z - d.Z*c.Y, d.Z*c.X - d.X*c.Z, d.X*c.Y - d.Y*c.X);
+	// c * a
+	Vector3 nac = Vector3(c.Y*a.Z - c.Z*a.Y, c.Z*a.X - c.X*a.Z, c.X*a.Y - c.Y*a.X);
+	// b * d
 	Vector3 nbd = Vector3(b.Y*d.Z - b.Z*d.Y, b.Z*d.X - b.X*d.Z, b.X*d.Y - b.Y*d.X);
 	//normalize them
 	//since normalization is seldom used, I did not seal it in a function
 	float tempLength = sqrt(nab.X*nab.X + nab.Y*nab.Y + nab.Z*nab.Z);
+	//all these four normal vectors have identical length
 	nab.X /= tempLength;
 	nab.Y /= tempLength;
 	nab.Z /= tempLength;
@@ -101,29 +109,57 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 	auto& shipPos = shipInstance->Transform.Translation;
 	//if we use abs as length, then if ship may "disapear"
 	//it is because the ship may run too quick that the distance in next frame is beyond the condition
-	float lengthToAb = nab.X * shipPos.X + nab.Y * shipPos.Y + nab.Z * shipPos.Z;
-	float lengthToCd = ncd.X * shipPos.X + ncd.Y * shipPos.Y + ncd.Z * shipPos.Z;
-	float lengthToAc = nac.X * shipPos.X + nac.Y * shipPos.Y + nac.Z * shipPos.Z;
-	float lengthToBd = nbd.X * shipPos.X + nbd.Y * shipPos.Y + nbd.Z * shipPos.Z;
+	float shipLengthToAb = nab.X * shipPos.X + nab.Y * shipPos.Y + nab.Z * shipPos.Z;
+	float shipLengthToCd = ncd.X * shipPos.X + ncd.Y * shipPos.Y + ncd.Z * shipPos.Z;
+	float shipLengthToAc = nac.X * shipPos.X + nac.Y * shipPos.Y + nac.Z * shipPos.Z;
+	float shipLengthToBd = nbd.X * shipPos.X + nbd.Y * shipPos.Y + nbd.Z * shipPos.Z;
 
-	if (lengthToAb < 0.1)
-	{
-		shipPos.Y = -shipPos.Y - 1;
-		//Log::Info << "upper bound" << std::endl;
-	}
-	if (lengthToCd > -0.1)
+	if (shipLengthToAb < 0.1)
 	{
 		shipPos.Y = -shipPos.Y + 1;
+		//Log::Info << "upper bound" << std::endl;
+	}
+	if (shipLengthToCd < 0.1)
+	{
+		shipPos.Y = -shipPos.Y - 1;
 		//Log::Info << "bottom bound" << std::endl;
 	}
-	if (lengthToAc > -0.1)
-	{
-		shipPos.X = -shipPos.X + 1;
-		//Log::Info << "left bound" << std::endl;
-	}
-	if (lengthToBd < 0.1)
+	if (shipLengthToAc < 0.1)
 	{
 		shipPos.X = -shipPos.X - 1;
+		//Log::Info << "left bound" << std::endl;
+	}
+	if (shipLengthToBd < 0.1)
+	{
+		shipPos.X = -shipPos.X + 1;
+		//Log::Info << "right bound" << std::endl;
+	}
+
+
+	auto& asteroidPos = asteroidInstance->Transform.Translation;
+	float asteroidLengthToAb = nab.X * asteroidPos.X + nab.Y * asteroidPos.Y + nab.Z * asteroidPos.Z;
+	float asteroidLengthToCd = ncd.X * asteroidPos.X + ncd.Y * asteroidPos.Y + ncd.Z * asteroidPos.Z;
+	float asteroidLengthToAc = nac.X * asteroidPos.X + nac.Y * asteroidPos.Y + nac.Z * asteroidPos.Z;
+	float asteroidLengthToBd = nbd.X * asteroidPos.X + nbd.Y * asteroidPos.Y + nbd.Z * asteroidPos.Z;
+
+	if (asteroidLengthToAb < 0.1)
+	{
+		asteroidPos.Y = -asteroidPos.Y - 1;
+		//Log::Info << "upper bound" << std::endl;
+	}
+	if (asteroidLengthToCd < 0.1)
+	{
+		asteroidPos.Y = -asteroidPos.Y + 1;
+		//Log::Info << "bottom bound" << std::endl;
+	}
+	if (asteroidLengthToAc < 0.1)
+	{
+		asteroidPos.X = -asteroidPos.X + 1;
+		//Log::Info << "left bound" << std::endl;
+	}
+	if (asteroidLengthToBd < 0.1)
+	{
+		asteroidPos.X = -asteroidPos.X - 1;
 		//Log::Info << "right bound" << std::endl;
 	}
 	//Log::Info << "ab " << lengthToAb << " cd " << lengthToCd
