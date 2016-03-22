@@ -26,7 +26,7 @@ bool AsteroidsGame::OnCreateScene()
 
     auto& cam = Game::Camera;
     
-    cam.Transform.Translation.Z = 1;//20
+    //cam.Transform.Translation.Z = 1;//20
 
 	glfwSetWindowSizeCallback(m_window, &(this->window_size_callback));
 
@@ -40,6 +40,7 @@ Ship& AsteroidsGame::CreateShip()
 	shipInstance = &ship;
     return *shipInstance;
 }
+
 Asteroid& AsteroidsGame::CreateAsteroid()
 {
 	auto &asteroid = Create<Asteroid>("asteroid");
@@ -114,24 +115,24 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 	float shipLengthToAc = nac.X * shipPos.X + nac.Y * shipPos.Y + nac.Z * shipPos.Z;
 	float shipLengthToBd = nbd.X * shipPos.X + nbd.Y * shipPos.Y + nbd.Z * shipPos.Z;
 
-	if (shipLengthToAb < 0.1)
+	if (shipLengthToAb < 0.01)
 	{
-		shipPos.Y = -shipPos.Y + 1;
+		shipPos.Y = -shipPos.Y + 0.1f;
 		//Log::Info << "upper bound" << std::endl;
 	}
-	if (shipLengthToCd < 0.1)
+	if (shipLengthToCd < 0.01)
 	{
-		shipPos.Y = -shipPos.Y - 1;
+		shipPos.Y = -shipPos.Y - 0.1f;
 		//Log::Info << "bottom bound" << std::endl;
 	}
-	if (shipLengthToAc < 0.1)
+	if (shipLengthToAc < 0.01)
 	{
-		shipPos.X = -shipPos.X - 1;
+		shipPos.X = -shipPos.X - 0.1f;
 		//Log::Info << "left bound" << std::endl;
 	}
-	if (shipLengthToBd < 0.1)
+	if (shipLengthToBd < 0.01)
 	{
-		shipPos.X = -shipPos.X + 1;
+		shipPos.X = -shipPos.X + 0.1f;
 		//Log::Info << "right bound" << std::endl;
 	}
 
@@ -142,24 +143,24 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 	float asteroidLengthToAc = nac.X * asteroidPos.X + nac.Y * asteroidPos.Y + nac.Z * asteroidPos.Z;
 	float asteroidLengthToBd = nbd.X * asteroidPos.X + nbd.Y * asteroidPos.Y + nbd.Z * asteroidPos.Z;
 
-	if (asteroidLengthToAb < 0.1)
+	if (asteroidLengthToAb < 0.01)
 	{
-		asteroidPos.Y = -asteroidPos.Y - 1;
+		asteroidPos.Y = -asteroidPos.Y + 0.1f;
 		//Log::Info << "upper bound" << std::endl;
 	}
-	if (asteroidLengthToCd < 0.1)
+	if (asteroidLengthToCd < 0.01)
 	{
-		asteroidPos.Y = -asteroidPos.Y + 1;
+		asteroidPos.Y = -asteroidPos.Y - 0.1f;
 		//Log::Info << "bottom bound" << std::endl;
 	}
-	if (asteroidLengthToAc < 0.1)
+	if (asteroidLengthToAc < 0.01)
 	{
-		asteroidPos.X = -asteroidPos.X + 1;
+		asteroidPos.X = -asteroidPos.X - 0.1f;
 		//Log::Info << "left bound" << std::endl;
 	}
-	if (asteroidLengthToBd < 0.1)
+	if (asteroidLengthToBd < 0.01)
 	{
-		asteroidPos.X = -asteroidPos.X - 1;
+		asteroidPos.X = -asteroidPos.X + 0.1f;
 		//Log::Info << "right bound" << std::endl;
 	}
 	//Log::Info << "ab " << lengthToAb << " cd " << lengthToCd
@@ -185,4 +186,6 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int height)
 {
 	Log::Info << "Size changed: width = " << width << " height = " << height << std::endl;
+	Camera.Aspect = width / height;
+	gl::Viewport(0, 0, width, height);
 }

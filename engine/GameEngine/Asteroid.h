@@ -14,12 +14,12 @@ public:
 
 	Asteroid()
 	{
-		velocity = Vector4(0.3, 0.3, 0, 0);
+		velocity = Vector4(0.5f, 0.8f, 0.f, 0.f);
 		center = Vector4(0, 0, 0, 0);
 		Transform.Translation.Z = -20;
-		rotateX = 0.4;
-		rotateY = 0.7;
-		rotateZ = 0.3;
+		rotateX = 0.4f;
+		rotateY = 0.7f;
+		rotateZ = 0.3f;
 		Transform.Rotation.X = rotateX;
 		Transform.Rotation.Y = rotateY;
 		Transform.Rotation.Z = rotateZ;

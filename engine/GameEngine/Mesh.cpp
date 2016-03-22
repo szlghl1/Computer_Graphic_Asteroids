@@ -27,24 +27,25 @@ bool Mesh::OnInitialize()
 
 void Mesh::OnRender(const GameTime& time)
 {
-    check_gl_error();
-
+	check_gl_error();
 	Material->Bind();
 	Material->SetUniforms(time);
-    
+
     //gl::PolygonMode(gl::FRONT_AND_BACK, (GLenum)Material->FillType);
 
     gl::BindVertexArray(m_vao);
-    /// bind the vertex and index buffers
+
+	/// bind the vertex and index buffers
     gl::BindBuffer((GLenum)BufferTarget::ElementArrayBuffer, m_indexBuffer);
     gl::BindBuffer((GLenum)BufferTarget::ArrayBuffer, m_vertexBuffer);
     
-    /// get the attribute location of Position (vertex) from the compiled shader
+	/// get the attribute location of Position (vertex) from the compiled shader
     auto location = gl::GetAttribLocation(Material->Program(), "Pos");
     
     /// enable position - really useful when we have a lot of vertex attributes and want to disable some of them
     gl::EnableVertexAttribArray(location);
-    
+
+
     /// Describe the vertex format to GL. This is a 3-component struct with float members (ie, vec3 in GLSL)
     gl::VertexAttribPointer(location, 3, gl::FLOAT, false, 0, nullptr);
     //56 draw it!
@@ -52,8 +53,7 @@ void Mesh::OnRender(const GameTime& time)
     
     /// unbind the program
     gl::UseProgram(0);
-    
-    check_gl_error();
+	check_gl_error();
 }
 
 

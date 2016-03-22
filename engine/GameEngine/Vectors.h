@@ -89,7 +89,6 @@ struct Vector3 : public Vector2
     
     
 };
-
 struct Vector4 : public Vector3
 {
     float W;
@@ -103,6 +102,7 @@ struct Vector4 : public Vector3
     {
         
     }
+
 };
 
 
