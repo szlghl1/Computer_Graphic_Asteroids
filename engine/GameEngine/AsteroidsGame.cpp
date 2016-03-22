@@ -17,12 +17,13 @@ using namespace std;
 #include "Files.h"
 
 #include <cmath>
+//#include <string>
 
 
 bool AsteroidsGame::OnCreateScene()
 {
     CreateShip();
-	CreateAsteroid();
+	CreateNAsteroid(3);
 
     auto& cam = Game::Camera;
     
@@ -41,11 +42,26 @@ Ship& AsteroidsGame::CreateShip()
     return *shipInstance;
 }
 
-Asteroid& AsteroidsGame::CreateAsteroid()
+Asteroid& AsteroidsGame::CreateOneAsteroid()
 {
 	auto &asteroid = Create<Asteroid>("asteroid");
-	asteroidInstance = &asteroid;
-	return *asteroidInstance;
+	asteroidList.push_back(&asteroid);
+	return asteroid;
+}
+
+void AsteroidsGame::CreateNAsteroid(int n)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		auto &tempInstance = Create<Asteroid>("asteroid" + to_string(n));
+		tempInstance.Transform.Translation.X = rand() % 10;
+		tempInstance.Transform.Translation.Y = rand() % 5;
+		tempInstance.velocity = Vector4((rand() % 10)/10.f, (rand() % 10)/10.f, 0, 0);
+		tempInstance.Transform.Rotation.X = (rand() % 60) / 10.f;
+		tempInstance.Transform.Rotation.Y = (rand() % 60) / 10.f;
+		tempInstance.Transform.Rotation.Z = (rand() % 60) / 10.f;
+		asteroidList.push_back(&tempInstance);
+	}
 }
 
 void AsteroidsGame::ProcessInput()
@@ -136,7 +152,7 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 		//Log::Info << "right bound" << std::endl;
 	}
 
-
+	/*
 	auto& asteroidPos = asteroidInstance->Transform.Translation;
 	float asteroidLengthToAb = nab.X * asteroidPos.X + nab.Y * asteroidPos.Y + nab.Z * asteroidPos.Z;
 	float asteroidLengthToCd = ncd.X * asteroidPos.X + ncd.Y * asteroidPos.Y + ncd.Z * asteroidPos.Z;
@@ -163,6 +179,8 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 		asteroidPos.X = -asteroidPos.X + 0.1f;
 		//Log::Info << "right bound" << std::endl;
 	}
+	*/
+
 	//Log::Info << "ab " << lengthToAb << " cd " << lengthToCd
 	/*
 	if (shipPos.X < leftBound)
@@ -188,4 +206,10 @@ void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int heig
 	Log::Info << "Size changed: width = " << width << " height = " << height << std::endl;
 	Camera.Aspect = width / height;
 	gl::Viewport(0, 0, width, height);
+}
+
+
+void AsteroidsGame::updateBound()
+{
+	std::cout << "update" << std::endl;
 }

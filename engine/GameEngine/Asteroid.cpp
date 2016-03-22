@@ -21,7 +21,8 @@ using namespace std;
 
 bool Asteroid::OnInitialize()
 {
-	auto& mesh = Create<Mesh>("Asteroid-mesh");
+	//auto& mesh = Create<Mesh>("Asteroid-mesh");
+	auto& mesh = Create<Mesh>(Name+"-mesh");
 
 	float X = 0.525731112119133606f;
 	float Z = 0.850650808352039932f;
@@ -95,7 +96,9 @@ bool Asteroid::OnInitialize()
 
 	m_mesh = &mesh;
 
-	auto& material = Create<class Material>("Asteroid-material");
+	//auto& material = Create<class Material>("Asteroid-material");
+	auto& material = Create<class Material>(Name + "material");
+	
 	m_material = &material;
 
 	mesh.Material = &material;
