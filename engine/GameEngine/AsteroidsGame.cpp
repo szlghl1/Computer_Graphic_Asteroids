@@ -67,7 +67,32 @@ void AsteroidsGame::CreateNAsteroid(int n)
 
 void AsteroidsGame::ProcessInput()
 {
+	auto* window = Game::Instance().Window();
 	shipInstance->ProcessInput();
+	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+	{
+		auto& camRotate = Game::Camera.Transform.Rotation;
+		if (camRotate.X <= 2 * PI)
+		{
+			camRotate.X += 0.01;
+		}
+		else
+		{
+			camRotate = 0;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+	{
+		auto& camRotate = Game::Camera.Transform.Rotation;
+		if (camRotate.X >= 0)
+		{
+			camRotate.X -= 0.01;
+		}
+		else
+		{
+			camRotate = 2*PI;
+		}
+	}
 }
 
 void AsteroidsGame::OnUpdate(const GameTime& time)
@@ -78,8 +103,11 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int height)
 {
 	Log::Info << "Size changed: width = " << width << " height = " << height << std::endl;
-	Camera.Aspect = static_cast<int>(width / height);
-	gl::Viewport(0, 0, width, height);
+	if (height)
+	{
+		Camera.Aspect = static_cast<int>(width / height);
+		gl::Viewport(0, 0, width, height);
+	}
 }
 
 
@@ -99,6 +127,8 @@ void AsteroidsGame::updateBound()
 
 Vector4 AsteroidsGame::deriveBound(float z)
 {
+	//it works if camera has not rotated
+	//if camera translated along Z axis, just add camera.z to z
 	float upBound = -z*tan(Game::Camera.FieldOfView/2);
 	Game::Camera.GetProjectionMatrix();
 	float rightBound = upBound * Game::Camera.Aspect;

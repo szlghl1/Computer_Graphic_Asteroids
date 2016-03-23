@@ -41,7 +41,11 @@ void Mesh::OnRender(const GameTime& time)
     
 	/// get the attribute location of Position (vertex) from the compiled shader
     auto location = gl::GetAttribLocation(Material->Program(), "Pos");
-    
+
+	gl::Enable(gl::DEPTH_TEST);
+	gl::Enable(gl::CULL_FACE);
+	gl::FrontFace(gl::CW);
+
     /// enable position - really useful when we have a lot of vertex attributes and want to disable some of them
     gl::EnableVertexAttribArray(location);
 

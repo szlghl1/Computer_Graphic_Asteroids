@@ -41,6 +41,8 @@ private:
 	std::vector<float> vertices;
 	std::vector<GLushort> indices;
 	float upBound, leftBound, rightBound, bottomBound;
+
+	void shot();
     
 };
 

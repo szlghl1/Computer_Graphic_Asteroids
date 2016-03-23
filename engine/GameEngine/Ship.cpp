@@ -147,6 +147,15 @@ void Ship::ProcessInput()
 		velocity.Y = 0;
 		acceleration.X = 0;
 		acceleration.Y = 0;
-    }
+    }    
+	
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		shot();
+	}
 }
 
+void Ship::shot()
+{
+	Log::Info << "Ship shotted." << std::endl;
+}
