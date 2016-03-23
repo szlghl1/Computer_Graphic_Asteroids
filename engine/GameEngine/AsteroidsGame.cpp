@@ -33,8 +33,6 @@ bool AsteroidsGame::OnCreateScene()
 	//callback = reinterpret_cast<decltype(callback)>(this->window_size_callback);
 	glfwSetWindowSizeCallback(m_window, window_size_callback);
 
-	updateBound();
-
     return true;
     
 }
@@ -170,10 +168,50 @@ void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int heig
 
 void AsteroidsGame::updateBound()
 {
-	//std::cout << "update" << std::endl;
-	shipInstance -> setBound(leftBound, rightBound, upBound, bottomBound);
-	for (std::vector<Asteroid *>::iterator i = asteroidList.begin(); i < asteroidList.end(); ++i)
+	//if bound of at this Z surface has already derived, retrive it from map
+	//if not, calculate it
+	//Because compare float will cause some problem, please use integer as Z (this game is 2D)
+	//Or use statement like x - toCompare < 0.01 to compare
+
+	//update ship
+	int tempZ = static_cast<int>(shipInstance -> Transform.Translation.Z);
+	map<int, Vector4>::iterator i = boundMap.find(tempZ);
+	if (i == boundMap.end())
 	{
-		(*i) -> setBound(leftBound, rightBound, upBound, bottomBound);
+		//calculate it
+		boundMap.insert({ tempZ,deriveBound(tempZ) });
 	}
+	else
+	{
+		//retrieve it 
+		auto& tempBound = boundMap[tempZ];
+		shipInstance -> setBound(tempBound.X, tempBound.Y, tempBound.Z, tempBound.W);
+	}
+
+	//update asteroids
+	for (std::vector<Asteroid *>::iterator asteroidIterator = asteroidList.begin()
+		;
+		asteroidIterator < asteroidList.end()
+		;
+		++asteroidIterator)
+	{
+		tempZ = static_cast<int>((*asteroidIterator) -> Transform.Translation.Z);
+		i = boundMap.find(tempZ);
+		if (i == boundMap.end())
+		{
+			//calculate it
+			boundMap.insert({ tempZ,deriveBound(tempZ) });
+		}
+		else
+		{
+			//retrieve it 
+			auto& tempBound = boundMap[tempZ];
+			(*asteroidIterator) -> setBound(tempBound.X, tempBound.Y, tempBound.Z, tempBound.W);
+		}
+	}
+}
+
+Vector4 AsteroidsGame::deriveBound(float z)
+{
+	return Vector4(8, -8, -15, 15);
 }

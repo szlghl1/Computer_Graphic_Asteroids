@@ -67,7 +67,7 @@ bool Asteroid::OnInitialize()
 	};
 
 	/*
-	//this is rectangle
+	//this is cube-shape
 	//the indices are wrong. If you want rectangles, correct it.
 	vertices =
 	{

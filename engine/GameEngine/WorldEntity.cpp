@@ -1,11 +1,11 @@
 #include "WorldEntity.h"
 
-void WorldEntity::setBound(float left, float right, float up, float bottom)
+void WorldEntity::setBound(float up, float bottom, float left, float right)
 {
+	upBound = up;
+	bottomBound = bottom;
 	leftBound = left;
 	rightBound = right;
-	upBound = up;
-	bottom = bottom;
 }
 
 void WorldEntity::checkBound()

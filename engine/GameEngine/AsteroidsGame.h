@@ -13,6 +13,8 @@
 #include "Ship.h"
 #include "Asteroid.h"
 
+struct Bound;
+
 class AsteroidsGame : public Game
 {
 public:
@@ -37,14 +39,11 @@ private:
 	Ship *shipInstance;
 	vector<Asteroid*> asteroidList;
 
-	const float upBound = 8;
-	const float bottomBound = -8;
-	const float leftBound = -15;
-	const float rightBound = 15;
+	map<int, Vector4> boundMap;
+	//in Vector4, X as upBound, Y as bottomBound, Z as leftBound, W as rightBound
 
 	static void window_size_callback(GLFWwindow* window, int width, int height);
 	void updateBound();
+	Vector4 deriveBound(float z);
 };
-
-
 #endif /* SimpleGame_hpp */

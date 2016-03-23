@@ -12,13 +12,12 @@
 
 Matrix& Camera::GetProjectionMatrix()
 {
+	int w, h;
+
+	Game::GetFramebufferSize(&w, &h);
+
+	Aspect = w * 1.f / h;
     /// check aspect
-    int w, h;
-    
-    Game::GetFramebufferSize(&w, &h);
-    
-    Aspect = w * 1.f / h;
-    
     if (Aspect != m_previousAspectRatio)
     {
         m_projectionMatrix = Matrix::CreatePerspective(FieldOfView, Aspect, ZNear, ZFar);
@@ -39,4 +38,3 @@ Matrix& Camera::GetViewMatrix()
     return m_viewMatrix;
     
 }
-

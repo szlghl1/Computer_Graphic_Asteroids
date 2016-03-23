@@ -22,10 +22,7 @@ public:
     float ZFar;
 	float Aspect;
     
-    Camera() : FieldOfView(TO_RADIANS(45)), ZNear(1), ZFar(1000)
-    {
-        
-    }
+	Camera() :FieldOfView(TO_RADIANS(45)), ZNear(1), ZFar(1000) {};
 
     Matrix& GetProjectionMatrix();
     Matrix& GetViewMatrix();
