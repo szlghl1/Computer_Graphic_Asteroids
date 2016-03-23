@@ -8,6 +8,14 @@ void WorldEntity::setBound(float up, float bottom, float left, float right)
 	rightBound = right;
 }
 
+void WorldEntity::setBound(Vector4 bound)
+{
+	upBound = bound.X;
+	bottomBound = bound.Y;
+	leftBound = bound.Z;
+	rightBound = bound.W;
+}
+
 void WorldEntity::checkBound()
 {
 	auto &trans = Transform.Translation;

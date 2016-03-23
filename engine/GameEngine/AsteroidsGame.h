@@ -37,13 +37,12 @@ public:
     
 private:
 	Ship *shipInstance;
-	vector<Asteroid*> asteroidList;
-
+	vector<Asteroid*> asteroidList; 
 	map<int, Vector4> boundMap;
 	//in Vector4, X as upBound, Y as bottomBound, Z as leftBound, W as rightBound
 
 	static void window_size_callback(GLFWwindow* window, int width, int height);
 	void updateBound();
-	Vector4 deriveBound(float z);
+	Vector4 deriveBound(int z);
 };
 #endif /* SimpleGame_hpp */
