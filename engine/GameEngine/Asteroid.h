@@ -15,7 +15,6 @@ public:
 	Asteroid()
 	{
 		velocity = Vector4(0.5f, 0.8f, 0.f, 0.f);
-		center = Vector4(0, 0, 0, 0);
 		Transform.Translation.Z = -20;
 		float rotateX = 0.4f;
 		float rotateY = 0.7f;
@@ -38,8 +37,6 @@ private:
 
 	std::vector<float> vertices;
 	std::vector<GLushort> indices;
-	Vector4 center;
-
 };
 
 #endif /* Asteroid_hpp */

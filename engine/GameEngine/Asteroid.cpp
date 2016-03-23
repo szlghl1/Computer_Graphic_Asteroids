@@ -67,6 +67,8 @@ bool Asteroid::OnInitialize()
 	};
 
 	/*
+	//this is rectangle
+	//the indices are wrong. If you want rectangles, correct it.
 	vertices =
 	{
 		-0.5f,0.5f,-0.5f,
@@ -90,7 +92,6 @@ bool Asteroid::OnInitialize()
 		3,2,6,6,7,3
 	};
 	*/
-	center = Vector4(0, 0, 0, 0);
 
 	mesh.Initialize(vertices, indices);
 
@@ -111,18 +112,11 @@ bool Asteroid::OnInitialize()
 void Asteroid::OnUpdate(const GameTime& time)
 {
 	Vector4 dX = velocity * time.ElapsedSeconds();
-	center += dX;
 	auto& translation = Transform.Translation;
 	translation.X += dX.X;
 	translation.Y += dX.Y;
 	translation.Z += dX.Z;
-
-	//Transform.Rotation.X += rotateX;
-	//Transform.Rotation.Y += rotateY;
-	//Transform.Rotation.Z += rotateZ;
-
-	//wrapping figure is implemented in AsteroidsGame::OnUpdate()
-
+	checkBound();
 }
 
 

@@ -23,7 +23,6 @@ public:
     {
 		acceleration = Vector4(0, 0, 0, 0);
 		velocity = Vector4(0, 0, 0, 0);
-		center = Vector4(0, 0, 0, 0);
 		angleRadian = 0;
 		Transform.Translation.Z = -20;
 		//Transform.Scale = (0.1, 0.1, 0.1);
@@ -49,7 +48,7 @@ private:
 	float angleRadian;
 	std::vector<float> vertices;
 	std::vector<GLushort> indices;
-	Vector4 center;
+	float upBound, leftBound, rightBound, bottomBound;
     
 };
 

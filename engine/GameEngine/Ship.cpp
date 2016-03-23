@@ -32,8 +32,6 @@ bool Ship::OnInitialize()
     };
     
     indices = {0,1,2,2,3,0};
-
-	center = Vector4(0, 0, 0, 0);
    
     mesh.Initialize(vertices, indices);
     
@@ -77,10 +75,6 @@ void Ship::OnUpdate(const GameTime& time)
 	}
 
 	Vector4 dX = velocity * time.ElapsedSeconds();
-	center += dX;
-	//translation.m03 += dX.X;
-	//translation.m13 += dX.Y;
-	//translation.m23 += dX.Z;
 	auto& translation = this->Transform.Translation;
 	translation.X += dX.X;
 	translation.Y += dX.Y;
@@ -88,8 +82,7 @@ void Ship::OnUpdate(const GameTime& time)
 
 	this->Transform.Rotation.Z = angleRadian;
 
-	//wrapping figure is implemented in AsteroidsGame::OnUpdate()
-
+	checkBound();
 }
 
 

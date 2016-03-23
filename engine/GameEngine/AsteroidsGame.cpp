@@ -29,7 +29,11 @@ bool AsteroidsGame::OnCreateScene()
     
     //cam.Transform.Translation.Z = 1;//20
 
-	glfwSetWindowSizeCallback(m_window, &(this->window_size_callback));
+	//void (*callback)(GLFWwindow*, int, int);
+	//callback = reinterpret_cast<decltype(callback)>(this->window_size_callback);
+	glfwSetWindowSizeCallback(m_window, window_size_callback);
+
+	updateBound();
 
     return true;
     
@@ -82,6 +86,7 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 	//	   C--------------------------------D
 	//
 	********************************************************/
+	/*
 	float halfH = Camera.ZNear * tan(Camera.FieldOfView / 2);
 	float halfW = halfH * Camera.Aspect;
 	//in OpenGL the direction of camera is inverse, because OpenGL can only recieve positive ZNear ZFar
@@ -151,54 +156,8 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 		shipPos.X = -shipPos.X + 0.1f;
 		//Log::Info << "right bound" << std::endl;
 	}
-
-	/*
-	auto& asteroidPos = asteroidInstance->Transform.Translation;
-	float asteroidLengthToAb = nab.X * asteroidPos.X + nab.Y * asteroidPos.Y + nab.Z * asteroidPos.Z;
-	float asteroidLengthToCd = ncd.X * asteroidPos.X + ncd.Y * asteroidPos.Y + ncd.Z * asteroidPos.Z;
-	float asteroidLengthToAc = nac.X * asteroidPos.X + nac.Y * asteroidPos.Y + nac.Z * asteroidPos.Z;
-	float asteroidLengthToBd = nbd.X * asteroidPos.X + nbd.Y * asteroidPos.Y + nbd.Z * asteroidPos.Z;
-
-	if (asteroidLengthToAb < 0.01)
-	{
-		asteroidPos.Y = -asteroidPos.Y + 0.1f;
-		//Log::Info << "upper bound" << std::endl;
-	}
-	if (asteroidLengthToCd < 0.01)
-	{
-		asteroidPos.Y = -asteroidPos.Y - 0.1f;
-		//Log::Info << "bottom bound" << std::endl;
-	}
-	if (asteroidLengthToAc < 0.01)
-	{
-		asteroidPos.X = -asteroidPos.X - 0.1f;
-		//Log::Info << "left bound" << std::endl;
-	}
-	if (asteroidLengthToBd < 0.01)
-	{
-		asteroidPos.X = -asteroidPos.X + 0.1f;
-		//Log::Info << "right bound" << std::endl;
-	}
 	*/
-
-	//Log::Info << "ab " << lengthToAb << " cd " << lengthToCd
-	/*
-	if (shipPos.X < leftBound)
-	{
-		shipPos.X = rightBound;
-	}
-	if (shipPos.X > rightBound)
-	{
-		shipPos.X = leftBound;
-	}
-	if (shipPos.Y > upBound)
-	{
-		shipPos.Y = bottomBound;
-	}
-	if (shipPos.Y < bottomBound)
-	{
-		shipPos.Y = upBound;
-	}*/
+	updateBound();
 }
 
 void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int height)
@@ -211,5 +170,10 @@ void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int heig
 
 void AsteroidsGame::updateBound()
 {
-	std::cout << "update" << std::endl;
+	//std::cout << "update" << std::endl;
+	shipInstance -> setBound(leftBound, rightBound, upBound, bottomBound);
+	for (std::vector<Asteroid *>::iterator i = asteroidList.begin(); i < asteroidList.end(); ++i)
+	{
+		(*i) -> setBound(leftBound, rightBound, upBound, bottomBound);
+	}
 }
