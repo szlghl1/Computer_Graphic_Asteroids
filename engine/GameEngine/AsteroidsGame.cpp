@@ -85,50 +85,19 @@ void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int heig
 
 void AsteroidsGame::updateBound()
 {
-	//if bound of at this Z surface has already derived, retrive it from map
-	//if not, calculate it
-	//Because compare float will cause some problem, please use integer as Z (this game is 2D)
-	//Or use statement like x - toCompare < 0.01 to compare
-
 	//update ship
 	int tempZ = static_cast<int>(shipInstance->Transform.Translation.Z);
-	map<int, Vector4>::iterator i = boundMap.find(tempZ);
-	if (i == boundMap.end())
-	{
-		//calculate it
-		boundMap.insert({ tempZ,deriveBound(tempZ) });
-	}
-	else
-	{
-		//retrieve it 
-		auto& tempBound = boundMap[tempZ];
-		shipInstance->setBound(tempBound.X, tempBound.Y, tempBound.Z, tempBound.W);
-	}
+	shipInstance->setBound(deriveBound(tempZ));
 
 	//update asteroids
-	for (std::vector<Asteroid *>::iterator asteroidIterator = asteroidList.begin()
-		;
-		asteroidIterator < asteroidList.end()
-		;
-		++asteroidIterator)
+	for (std::vector<Asteroid *>::iterator i = asteroidList.begin(); i < asteroidList.end(); ++i)
 	{
-		tempZ = static_cast<int>((*asteroidIterator)->Transform.Translation.Z);
-		i = boundMap.find(tempZ);
-		if (i == boundMap.end())
-		{
-			//calculate it
-			boundMap.insert({ tempZ,deriveBound(tempZ) });
-		}
-		else
-		{
-			//retrieve it 
-			auto& tempBound = boundMap[tempZ];
-			(*asteroidIterator)->setBound(tempBound.X, tempBound.Y, tempBound.Z, tempBound.W);
-		}
+		tempZ = static_cast<int>((*i)->Transform.Translation.Z);
+		(*i)->setBound(deriveBound(tempZ));
 	}
 }
 
-Vector4 AsteroidsGame::deriveBound(int z)
+Vector4 AsteroidsGame::deriveBound(float z)
 {
 	float upBound = -z*tan(Game::Camera.FieldOfView/2);
 	Game::Camera.GetProjectionMatrix();
