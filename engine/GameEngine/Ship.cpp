@@ -88,7 +88,7 @@ void Ship::OnRender(const GameTime& time)
     m_material->SetUniform("Projection",cam.GetProjectionMatrix());
 }
 
-void Ship::ProcessInput()
+void Ship::ProcessInput(const GameTime& time)
 {
 	angleVelocity = atan(velocity.X/velocity.Y);
 
@@ -147,15 +147,11 @@ void Ship::ProcessInput()
 		velocity.Y = 0;
 		acceleration.X = 0;
 		acceleration.Y = 0;
-    }    
-	
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		shot();
-	}
+    }
 }
-
+/*
 void Ship::shot()
 {
 	Log::Info << "Ship shotted." << std::endl;
 }
+*/

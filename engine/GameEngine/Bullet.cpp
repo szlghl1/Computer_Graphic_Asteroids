@@ -1,5 +1,5 @@
 #include "Common.h"
-#include "Asteroid.h"
+#include "Bullet.h"
 #include "Mesh.h"
 #include "Game.h"
 #include "Camera.h"
@@ -7,10 +7,9 @@
 #include <vector>
 #include <cmath>
 
-bool Asteroid::OnInitialize()
+bool Bullet::OnInitialize()
 {
-	//auto& mesh = Create<Mesh>("Asteroid-mesh");
-	auto& mesh = Create<Mesh>(Name+"-mesh");
+	auto& mesh = Create<Mesh>(Name + "-mesh");
 
 	float X = 0.525731112119133606f;
 	float Z = 0.850650808352039932f;
@@ -60,7 +59,7 @@ bool Asteroid::OnInitialize()
 
 	//auto& material = Create<class Material>("Asteroid-material");
 	auto& material = Create<class Material>(Name + "-material");
-	
+
 	m_material = &material;
 
 	mesh.Material = &material;
@@ -70,7 +69,7 @@ bool Asteroid::OnInitialize()
 
 }
 
-void Asteroid::OnUpdate(const GameTime& time)
+void Bullet::OnUpdate(const GameTime& time)
 {
 	Vector4 dX = velocity * time.ElapsedSeconds();
 	auto& translation = Transform.Translation;
@@ -81,11 +80,37 @@ void Asteroid::OnUpdate(const GameTime& time)
 }
 
 
-void Asteroid::OnRender(const GameTime& time)
+void Bullet::OnRender(const GameTime& time)
 {
 	auto& cam = Game::Camera;
 	m_material->Bind();
 	m_material->SetUniform("World", Transform.GetMatrix());
 	m_material->SetUniform("View", cam.GetViewMatrix());
 	m_material->SetUniform("Projection", cam.GetProjectionMatrix());
+}
+
+void Bullet::checkBound()
+{
+	auto &trans = Transform.Translation;
+
+	if (trans.X < leftBound)
+	{
+		Transform.Translation = Vector3(0, 0, 10.f);
+		velocity = Vector4(0, 0, 0, 0);
+	}
+	else if (trans.X > rightBound)
+	{
+		Transform.Translation = Vector3(0, 0, 10.f);
+		velocity = Vector4(0, 0, 0, 0);
+	}
+	else if (trans.Y > upBound)
+	{
+		Transform.Translation = Vector3(0, 0, 10.f);
+		velocity = Vector4(0, 0, 0, 0);
+	}
+	else if (trans.Y < bottomBound)
+	{
+		Transform.Translation = Vector3(0, 0, 10.f);
+		velocity = Vector4(0, 0, 0, 0);
+	}
 }

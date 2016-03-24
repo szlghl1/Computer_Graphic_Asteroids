@@ -21,19 +21,17 @@ public:
     }
     
     bool OnInitialize() override;
-    
     void OnUpdate(const GameTime& time) override;
     void OnRender(const GameTime& time) override;
-    
-    void ProcessInput();
+    void ProcessInput(const GameTime& time);
+	//void shot();
 private:
 	const float pi = 3.14159265358979f;
 	const float max_speed = 8.0f;
 	const float deceleration = 0.01f;
 
     Mesh* m_mesh;
-    Material* m_material;
-
+	Material* m_material;
 	Vector4 acceleration;
 	Vector4 velocity;
 	float angleVelocity;
@@ -41,9 +39,6 @@ private:
 	std::vector<float> vertices;
 	std::vector<GLushort> indices;
 	float upBound, leftBound, rightBound, bottomBound;
-
-	void shot();
-    
 };
 
 

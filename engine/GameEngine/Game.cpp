@@ -113,7 +113,7 @@ bool Game::Run()
         /* Poll for and process events */
         glfwPollEvents();
 
-		ProcessInput();
+		ProcessInput(time);
         
         Update(time);
         

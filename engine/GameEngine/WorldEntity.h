@@ -12,7 +12,7 @@ public:
 	void setBound(Vector4 bound);
 protected:
 	float upBound, leftBound, rightBound, bottomBound;
-	void checkBound();
+	virtual void checkBound();
 };
 
 #endif /* WorldEntity_hpp */

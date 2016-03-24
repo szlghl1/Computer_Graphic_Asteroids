@@ -42,7 +42,7 @@ public:
 private:
     static Game* m_instance;
 
-	virtual void ProcessInput() = 0;    
+	virtual void ProcessInput(const GameTime& time) = 0;
     
     bool m_isInitialized;
 

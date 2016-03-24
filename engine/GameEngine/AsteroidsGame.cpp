@@ -24,7 +24,8 @@ using namespace std;
 bool AsteroidsGame::OnCreateScene()
 {
     CreateShip();
-	CreateNAsteroid(3);
+	CreateNAsteroid(numberOfAsteroid);
+	CreateNBullet(numberOfBullet);
 
     auto& cam = Game::Camera;
     
@@ -52,29 +53,54 @@ Asteroid& AsteroidsGame::CreateOneAsteroid()
 
 void AsteroidsGame::CreateNAsteroid(int n)
 {
+	static int nExist = 0;
 	for (int i = 0; i < n; ++i)
 	{
-		auto &tempInstance = Create<Asteroid>("asteroid" + to_string(n));
+		auto &tempInstance = Create<Asteroid>("asteroid" + to_string(n + nExist));
 		tempInstance.Transform.Translation.X = (rand() % 100) / 10.f;
 		tempInstance.Transform.Translation.Y = (rand() % 100) / 20.f;
-		tempInstance.velocity = Vector4((rand() % 10)/10.f, (rand() % 10)/10.f, 0, 0);
-		tempInstance.Transform.Rotation.X = (rand() % 60) / 10.f;
-		tempInstance.Transform.Rotation.Y = (rand() % 60) / 10.f;
-		tempInstance.Transform.Rotation.Z = (rand() % 60) / 10.f;
+		tempInstance.velocity = Vector4((rand() % 10)/10.f, (rand() % 10)/10.f, 0.f, 0.f);
+		tempInstance.Transform.Rotation.X = (rand() % 600) / 10.f;
+		tempInstance.Transform.Rotation.Y = (rand() % 600) / 10.f;
+		tempInstance.Transform.Rotation.Z = (rand() % 600) / 10.f;
 		asteroidList.push_back(&tempInstance);
+		nExist++;
 	}
 }
 
-void AsteroidsGame::ProcessInput()
+void AsteroidsGame::CreateNBullet(int n)
+{
+	static int nExist = 0;
+	for (int i = 0; i < n; ++i)
+	{
+		auto &tempInstance = Create<Bullet>("bullet" + to_string(n + nExist));
+		tempInstance.Transform.Translation.Z = 10.f;//make it invisible at beginning
+		bulletList.push_back(&tempInstance);
+		nExist++;
+	}
+}
+
+Bullet& AsteroidsGame::showBullet(Vector3 coor, float radiusAngle)
+{
+	static int nextIndex = 0;
+	Bullet *bullet = bulletList.at(nextIndex % bulletList.size());
+	bullet->setBullet(shipInstance->Transform.Translation, shipInstance->Transform.Rotation.Z);
+	nextIndex++;
+	return *bullet;
+}
+
+void AsteroidsGame::ProcessInput(const GameTime& time)
 {
 	auto* window = Game::Instance().Window();
-	shipInstance->ProcessInput();
+
+	shipInstance->ProcessInput(time);
+
 	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
 	{
 		auto& camRotate = Game::Camera.Transform.Rotation;
 		if (camRotate.X <= 2 * PI)
 		{
-			camRotate.X += 0.01;
+			camRotate.X += 0.01f;
 		}
 		else
 		{
@@ -86,11 +112,20 @@ void AsteroidsGame::ProcessInput()
 		auto& camRotate = Game::Camera.Transform.Rotation;
 		if (camRotate.X >= 0)
 		{
-			camRotate.X -= 0.01;
+			camRotate.X -= 0.01f;
 		}
 		else
 		{
 			camRotate = 2*PI;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		static float lastShotTime = 0;
+		if (time.TotalSeconds() - lastShotTime >= 0.5)
+		{
+			shipShot();
+			lastShotTime = time.TotalSeconds();
 		}
 	}
 }
@@ -105,7 +140,7 @@ void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int heig
 	Log::Info << "Size changed: width = " << width << " height = " << height << std::endl;
 	if (height)
 	{
-		Camera.Aspect = static_cast<int>(width / height);
+		Camera.Aspect = static_cast<float>(width / height);
 		gl::Viewport(0, 0, width, height);
 	}
 }
@@ -123,9 +158,16 @@ void AsteroidsGame::updateBound()
 		tempZ = static_cast<int>((*i)->Transform.Translation.Z);
 		(*i)->setBound(deriveBound(tempZ));
 	}
+
+	//update bullets
+	for (std::vector<Bullet *>::iterator i = bulletList.begin(); i < bulletList.end(); ++i)
+	{
+		tempZ = static_cast<int>((*i)->Transform.Translation.Z);
+		(*i)->setBound(deriveBound(tempZ));
+	}
 }
 
-Vector4 AsteroidsGame::deriveBound(float z)
+Vector4 AsteroidsGame::deriveBound(int z)
 {
 	//it works if camera has not rotated
 	//if camera translated along Z axis, just add camera.z to z
@@ -133,4 +175,10 @@ Vector4 AsteroidsGame::deriveBound(float z)
 	Game::Camera.GetProjectionMatrix();
 	float rightBound = upBound * Game::Camera.Aspect;
 	return Vector4(upBound,-upBound,-rightBound,rightBound);
+}
+
+void AsteroidsGame::shipShot()
+{
+	showBullet(shipInstance->Transform.Translation, shipInstance->Transform.Rotation.Z);
+	Log::Info << "Ship shotted a bullet." << std::endl;
 }

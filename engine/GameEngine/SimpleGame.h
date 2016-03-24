@@ -22,7 +22,7 @@ public:
     bool LoadShaders(const std::string& baseFilename, std::string& vertexShaderSource, std::string& fragmentShaderSource);
     /// location of shaders in the file system.
 	std::string ShaderFolder;
-	void ProcessInput()override
+	void ProcessInput(const GameTime& time)override
 	{
 		;
 	}

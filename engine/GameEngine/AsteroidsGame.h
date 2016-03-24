@@ -12,8 +12,10 @@
 #include "Game.h"
 #include "Ship.h"
 #include "Asteroid.h"
+#include "Bullet.h"
 
-struct Bound;
+const int numberOfBullet = 20;
+const int numberOfAsteroid = 3;
 
 class AsteroidsGame : public Game
 {
@@ -30,17 +32,21 @@ public:
     
     Ship& CreateShip();
 	Asteroid& CreateOneAsteroid();
+	void CreateNBullet(int n);
+	Bullet& showBullet(Vector3 coor, float radiusAngle);
 	void CreateNAsteroid(int n);
 
-	void ProcessInput() override;
+	void ProcessInput(const GameTime& time) override;
 	void OnUpdate(const GameTime& time) override;
     
 private:
 	Ship *shipInstance;
 	vector<Asteroid*> asteroidList; 
+	vector<Bullet*> bulletList;
 
 	static void window_size_callback(GLFWwindow* window, int width, int height);
 	void updateBound();
-	Vector4 deriveBound(float z);
+	Vector4 deriveBound(int z);
+	void shipShot();
 };
 #endif /* SimpleGame_hpp */
