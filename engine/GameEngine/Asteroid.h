@@ -30,6 +30,8 @@ public:
 	bool OnInitialize() override;
 	void OnUpdate(const GameTime& time) override;
 	void OnRender(const GameTime& time) override;
+	void explode();
+	//if you have asteroids in different Z, it should be modified
 	inline float getRadius() { return radius; }
 private:
 	//const float pi = 3.14159265358979f;

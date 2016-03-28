@@ -90,3 +90,9 @@ void Asteroid::OnRender(const GameTime& time)
 	m_material->SetUniform("Projection", cam.GetProjectionMatrix());
 	m_material->SetUniform("objectColor",color);
 }
+
+void Asteroid::explode()
+{
+	hideAsteroid();
+	Log::Info << "Asteroid exploded." << std::endl;
+}

@@ -18,8 +18,6 @@ using namespace std;
 #include "Files.h"
 
 #include <cmath>
-//#include <string>
-
 
 bool AsteroidsGame::OnCreateScene()
 {
@@ -47,7 +45,7 @@ Ship& AsteroidsGame::CreateShip()
 Asteroid& AsteroidsGame::CreateOneAsteroid()
 {
 	auto &asteroid = Create<Asteroid>("asteroid");
-	asteroidList.push_back(&asteroid);
+	asteroidActiveList.push_back(&asteroid);
 	return asteroid;
 }
 
@@ -63,7 +61,7 @@ void AsteroidsGame::CreateNAsteroid(int n)
 		tempInstance.Transform.Rotation.X = (rand() % 600) / 10.f;
 		tempInstance.Transform.Rotation.Y = (rand() % 600) / 10.f;
 		tempInstance.Transform.Rotation.Z = (rand() % 600) / 10.f;
-		asteroidList.push_back(&tempInstance);
+		asteroidActiveList.push_back(&tempInstance);
 		nExist++;
 	}
 }
@@ -74,7 +72,7 @@ void AsteroidsGame::CreateNBullet(int n)
 	for (int i = 0; i < n; ++i)
 	{
 		auto &tempInstance = Create<Bullet>("bullet" + to_string(n + nExist));
-		tempInstance.Transform.Translation.Z = 10.f;//make it invisible at beginning
+		tempInstance.hideBullet();//make it invisible at beginning
 		bulletList.push_back(&tempInstance);
 		nExist++;
 	}
@@ -88,6 +86,21 @@ Bullet& AsteroidsGame::showBullet(Vector3 coor, float radiusAngle)
 	bullet->invisible = 0;
 	nextIndex++;
 	return *bullet;
+	/*
+	Bullet *bullet = nullptr;
+	if (bulletInActiveList.size() != 0)
+	{
+		bullet = bulletInActiveList.at(0);
+	}
+	else
+	{
+		Log::Error << "Inactive bullet is not enough to shot." << std::endl;
+	}
+	bullet->invisible = 0;
+	bullet->setBullet(shipInstance->Transform.Translation, shipInstance->Transform.Rotation.Z);
+	bulletActiveList.push_back(bullet);
+	return *bullet;
+	*/
 }
 
 void AsteroidsGame::ProcessInput(const GameTime& time)
@@ -134,7 +147,9 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 void AsteroidsGame::OnUpdate(const GameTime& time)
 {
 	updateBound();
-	collisionDetect();
+	collisionDetect(); 
+	auto title = "Time: " + to_string(time.TotalSeconds()) + " Score: " + to_string(score) + " Life: " + to_string(life);
+	glfwSetWindowTitle(m_window, title.c_str());
 }
 
 void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int height)
@@ -155,7 +170,7 @@ void AsteroidsGame::updateBound()
 	shipInstance->setBound(deriveBound(tempZ));
 
 	//update asteroids
-	for (std::vector<Asteroid *>::iterator i = asteroidList.begin(); i < asteroidList.end(); ++i)
+	for (std::vector<Asteroid *>::iterator i = asteroidActiveList.begin(); i < asteroidActiveList.end(); ++i)
 	{
 		tempZ = static_cast<int>((*i)->Transform.Translation.Z);
 		(*i)->setBound(deriveBound(tempZ));
@@ -187,20 +202,24 @@ void AsteroidsGame::shipShot()
 
 void AsteroidsGame::collisionDetect()
 {
-	for (vector<Asteroid*>::iterator i = asteroidList.begin(); i != asteroidList.end(); ++i)
+	for (vector<Asteroid*>::size_type i = 0; i < asteroidActiveList.size(); ++i)
 	{
-		auto& asteroidLocate = (*i)->Transform.Translation;
-		for (vector<Bullet*>::iterator j = bulletList.begin(); j != bulletList.end(); ++j)
+		auto& asteroidLocate = asteroidActiveList.at(i)->Transform.Translation;
+		for (vector<Bullet*>::size_type j = 0; j < bulletList.size(); ++j)
 		{
-			auto& bulletLocate = (*j)->Transform.Translation;
+			auto& bulletLocate = bulletList.at(j)->Transform.Translation;
 			float distanceSquare = pow(bulletLocate.X - asteroidLocate.X, 2) + pow(bulletLocate.Y - asteroidLocate.Y, 2) + pow(bulletLocate.Z - asteroidLocate.Z, 2);
-			if (distanceSquare < pow((*i)->getRadius(), 2))
+			if (distanceSquare < pow(asteroidActiveList.at(i)->getRadius(), 2))
 			{
-				(*i)->invisible = 1;
-				(*j)->hideBullet();
-				//need to implement placing asteroid to another place
-				//need to implement a "active asteroid list", avoid unnecessary distance calculation
-				Log::Info << "collision detected." << "\r";
+				Log::Info << "Collision between bullet and asteroid detected." << std::endl;
+				score += 10;
+
+				asteroidActiveList.at(i)->explode();
+				asteroidInActiveList.push_back(asteroidActiveList.at(i));
+				asteroidActiveList.erase(asteroidActiveList.begin() + i);
+
+				bulletList.at(j)->hideBullet();
+				break;
 			}
 		}
 	}

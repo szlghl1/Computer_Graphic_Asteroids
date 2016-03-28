@@ -125,10 +125,6 @@ bool Game::Run()
         /* Render here */
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
-        
-        auto title = "Time: " + std::to_string(time.TotalSeconds());
-        
-        glfwSetWindowTitle(m_window, title.c_str());
                            
         time.Update();
     }

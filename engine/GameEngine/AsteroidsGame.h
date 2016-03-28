@@ -41,7 +41,8 @@ public:
     
 private:
 	Ship *shipInstance;
-	vector<Asteroid*> asteroidList; 
+	vector<Asteroid*> asteroidActiveList; 
+	vector<Asteroid*> asteroidInActiveList;
 	vector<Bullet*> bulletList;
 
 	static void window_size_callback(GLFWwindow* window, int width, int height);
@@ -49,5 +50,7 @@ private:
 	Vector4 deriveBound(int z);
 	void shipShot();
 	void collisionDetect();
+	int score = 0;
+	int life = 5;
 };
 #endif /* SimpleGame_hpp */
