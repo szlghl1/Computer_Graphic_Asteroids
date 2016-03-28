@@ -26,9 +26,11 @@ public:
 
 	Vector4 velocity;
 
+	inline void hideAsteroid() { Transform.Translation = Vector3(0, 0, 10); invisible = 1; }
 	bool OnInitialize() override;
 	void OnUpdate(const GameTime& time) override;
 	void OnRender(const GameTime& time) override;
+	inline float getRadius() { return radius; }
 private:
 	//const float pi = 3.14159265358979f;
 
@@ -39,6 +41,8 @@ private:
 	std::vector<GLushort> indices;
 
 	Vector4 color = Vector4(0, 0.5, 0.5, 0);
+
+	float radius = 1;
 };
 
 #endif /* Asteroid_hpp */

@@ -85,6 +85,7 @@ Bullet& AsteroidsGame::showBullet(Vector3 coor, float radiusAngle)
 	static int nextIndex = 0;
 	Bullet *bullet = bulletList.at(nextIndex % bulletList.size());
 	bullet->setBullet(shipInstance->Transform.Translation, shipInstance->Transform.Rotation.Z);
+	bullet->invisible = 0;
 	nextIndex++;
 	return *bullet;
 }
@@ -133,6 +134,7 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 void AsteroidsGame::OnUpdate(const GameTime& time)
 {
 	updateBound();
+	collisionDetect();
 }
 
 void AsteroidsGame::window_size_callback(GLFWwindow* window, int width, int height)
@@ -181,4 +183,25 @@ void AsteroidsGame::shipShot()
 {
 	showBullet(shipInstance->Transform.Translation, shipInstance->Transform.Rotation.Z);
 	Log::Info << "Ship shotted a bullet." << std::endl;
+}
+
+void AsteroidsGame::collisionDetect()
+{
+	for (vector<Asteroid*>::iterator i = asteroidList.begin(); i != asteroidList.end(); ++i)
+	{
+		auto& asteroidLocate = (*i)->Transform.Translation;
+		for (vector<Bullet*>::iterator j = bulletList.begin(); j != bulletList.end(); ++j)
+		{
+			auto& bulletLocate = (*j)->Transform.Translation;
+			float distanceSquare = pow(bulletLocate.X - asteroidLocate.X, 2) + pow(bulletLocate.Y - asteroidLocate.Y, 2) + pow(bulletLocate.Z - asteroidLocate.Z, 2);
+			if (distanceSquare < pow((*i)->getRadius(), 2))
+			{
+				(*i)->invisible = 1;
+				(*j)->hideBullet();
+				//need to implement placing asteroid to another place
+				//need to implement a "active asteroid list", avoid unnecessary distance calculation
+				Log::Info << "collision detected." << "\r";
+			}
+		}
+	}
 }

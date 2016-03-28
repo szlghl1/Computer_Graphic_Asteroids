@@ -47,6 +47,11 @@ void GameObject::DoPostUpdate(const GameTime& time)
 
 void GameObject::DoPreRender(const GameTime& time)
 {
+	if (invisible == 1)
+	{
+		return;
+	}
+
     OnPreRender(time);
     
     for (auto it = begin(m_children); it != end(m_children); ++it)
@@ -60,7 +65,12 @@ void GameObject::DoPreRender(const GameTime& time)
 void GameObject::DoRender(const GameTime& time)
 {
     check_gl_error();
-    
+
+	if (invisible == 1)
+	{
+		return;
+	}
+
     OnRender(time);
     
     for (auto it = begin(m_children); it != end(m_children); ++it)

@@ -48,5 +48,6 @@ private:
 	void updateBound();
 	Vector4 deriveBound(int z);
 	void shipShot();
+	void collisionDetect();
 };
 #endif /* SimpleGame_hpp */

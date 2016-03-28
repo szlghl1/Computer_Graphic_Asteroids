@@ -98,20 +98,24 @@ void Bullet::checkBound()
 	{
 		Transform.Translation = Vector3(0, 0, 10.f);
 		velocity = Vector4(0, 0, 0, 0);
+		invisible = 1;
 	}
 	else if (trans.X > rightBound)
 	{
 		Transform.Translation = Vector3(0, 0, 10.f);
 		velocity = Vector4(0, 0, 0, 0);
+		invisible = 1;
 	}
 	else if (trans.Y > upBound)
 	{
 		Transform.Translation = Vector3(0, 0, 10.f);
 		velocity = Vector4(0, 0, 0, 0);
+		invisible = 1;
 	}
 	else if (trans.Y < bottomBound)
 	{
 		Transform.Translation = Vector3(0, 0, 10.f);
 		velocity = Vector4(0, 0, 0, 0);
+		invisible = 1;
 	}
 }

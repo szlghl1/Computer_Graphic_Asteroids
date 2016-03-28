@@ -18,6 +18,7 @@
 class GameObject
 {
 public:
+	bool invisible = 0;
     std::string Name;
     int Id;
     
@@ -114,7 +115,6 @@ private:
     
     
 protected:
-    
     
 };
 
