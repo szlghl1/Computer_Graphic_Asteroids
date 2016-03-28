@@ -28,12 +28,13 @@ public:
 private:
 	const float pi = 3.14159265358979f;
 	const float max_speed = 8.0f;
-	const float deceleration = 0.01f;
+	const float deceleration = 0.02f;
 
     Mesh* m_mesh;
 	Material* m_material;
 	Vector4 acceleration;
 	Vector4 velocity;
+	Vector4 color = Vector4(0.5, 0.5, 0, 0);
 	float angleVelocity;
 	float angleRadian;
 	std::vector<float> vertices;

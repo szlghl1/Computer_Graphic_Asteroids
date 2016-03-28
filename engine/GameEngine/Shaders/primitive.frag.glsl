@@ -13,9 +13,10 @@ void main()
 
 	float intensity = dot(normal, lightDirection);
 
-	vec3 lightColor = vec3(0.5,0,0);
+	//vec3 lightColor = vec3(0.5,0,0);
 
-	vec3 baseLight = vec3(0.6,0,0);
+	vec4 baseLight = normalize(Color) * 0.3;
 
-    fragmentColor = vec4(lightColor * intensity + vec3(0.5,0,0),1);
+    //fragmentColor = vec4(lightColor * intensity + vec3(0.5,0,0),1);
+	fragmentColor = vec4(((Color * intensity + baseLight).xyz),1);
 }

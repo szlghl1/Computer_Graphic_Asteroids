@@ -29,6 +29,8 @@ private:
 	Mesh* m_mesh;
 	Material* m_material;
 
+	Vector4 color = Vector4(0.2, 0.2, 0.2, 0);
+
 	std::vector<float> vertices;
 	std::vector<GLushort> indices;
 

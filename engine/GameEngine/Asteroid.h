@@ -37,6 +37,8 @@ private:
 
 	std::vector<float> vertices;
 	std::vector<GLushort> indices;
+
+	Vector4 color = Vector4(0, 0.5, 0.5, 0);
 };
 
 #endif /* Asteroid_hpp */

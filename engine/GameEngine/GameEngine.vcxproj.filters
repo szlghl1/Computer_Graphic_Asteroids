@@ -157,10 +157,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\simple.frag.glsl">
+    <None Include="Shaders\primitive.frag.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\simple.vert.glsl">
+    <None Include="Shaders\primitive.vert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

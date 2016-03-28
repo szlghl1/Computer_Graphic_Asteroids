@@ -86,6 +86,7 @@ void Ship::OnRender(const GameTime& time)
 	m_material->SetUniform("World", Transform.GetMatrix());
     m_material->SetUniform("View",cam.GetViewMatrix());
     m_material->SetUniform("Projection",cam.GetProjectionMatrix());
+	m_material->SetUniform("objectColor", color);
 }
 
 void Ship::ProcessInput(const GameTime& time)

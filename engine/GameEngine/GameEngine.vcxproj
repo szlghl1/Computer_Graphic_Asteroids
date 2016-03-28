@@ -135,8 +135,8 @@
     <ClInclude Include="WorldEntity.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\simple.frag.glsl" />
-    <None Include="Shaders\simple.vert.glsl" />
+    <None Include="Shaders\primitive.frag.glsl" />
+    <None Include="Shaders\primitive.vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

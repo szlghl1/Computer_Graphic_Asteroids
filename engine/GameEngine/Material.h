@@ -85,6 +85,10 @@ public:
         gl::UniformMatrix4fv(location, 1, false, &m.m00);
     }
 
+	inline void SetUniform(int location, const Vector4& v)
+	{
+		gl::Uniform4f(location, v.X, v.Y, v.Z, v.W);
+	}
 
 
 private:
