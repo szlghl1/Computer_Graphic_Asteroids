@@ -15,7 +15,7 @@
 #include "Bullet.h"
 
 const int numberOfBullet = 20;
-const int numberOfAsteroid = 3;
+const int numberOfAsteroid = 10;
 
 class AsteroidsGame : public Game
 {
@@ -35,6 +35,7 @@ public:
 	void CreateNBullet(int n);
 	Bullet& showBullet(Vector3 coor, float radiusAngle);
 	void CreateNAsteroid(int n);
+	void showNAsteroid(int n);
 
 	void ProcessInput(const GameTime& time) override;
 	void OnUpdate(const GameTime& time) override;
@@ -50,6 +51,8 @@ private:
 	Vector4 deriveBound(int z);
 	void shipShot();
 	void collisionDetect();
+	bool checkCollision(const Ship& tempShip, const Asteroid& tempAsteroid);
+	bool checkCollision(const Asteroid& tempAsteroid, const Bullet& tempbullet);
 	int score = 0;
 	int life = 5;
 };

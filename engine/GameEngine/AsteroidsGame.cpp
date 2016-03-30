@@ -25,6 +25,8 @@ bool AsteroidsGame::OnCreateScene()
 	CreateNAsteroid(numberOfAsteroid);
 	CreateNBullet(numberOfBullet);
 
+	showNAsteroid(5);
+
     auto& cam = Game::Camera;
     
     //cam.Transform.Translation.Z = 1;//20
@@ -55,14 +57,40 @@ void AsteroidsGame::CreateNAsteroid(int n)
 	for (int i = 0; i < n; ++i)
 	{
 		auto &tempInstance = Create<Asteroid>("asteroid" + to_string(n + nExist));
-		tempInstance.Transform.Translation.X = (rand() % 100) / 10.f;
-		tempInstance.Transform.Translation.Y = (rand() % 100) / 20.f;
-		tempInstance.velocity = Vector4((rand() % 10)/10.f, (rand() % 10)/10.f, 0.f, 0.f);
-		tempInstance.Transform.Rotation.X = (rand() % 600) / 10.f;
-		tempInstance.Transform.Rotation.Y = (rand() % 600) / 10.f;
-		tempInstance.Transform.Rotation.Z = (rand() % 600) / 10.f;
-		asteroidActiveList.push_back(&tempInstance);
+		tempInstance.hide();
+		asteroidInActiveList.push_back(&tempInstance);
 		nExist++;
+	}
+}
+
+void AsteroidsGame::showNAsteroid(int n)
+{
+	for (int i = 0; i < n; ++i)
+	{
+		if (asteroidInActiveList.size() == 0)
+		{
+			Log::Error << "Inactive asteroids not enough to show." << std::endl;
+			return;
+		}
+
+		auto tempInstance = asteroidInActiveList.at(0);
+
+		//ensure asteroids will not appear at the same spot as ship
+		do
+		{
+			tempInstance->Transform.Translation.X = (rand() % 100) / 10.f;
+			tempInstance->Transform.Translation.Y = (rand() % 100) / 20.f;
+			tempInstance->Transform.Translation.Z = -20.f;
+		} while (checkCollision(*shipInstance, *tempInstance));
+
+		tempInstance->velocity = Vector4((rand() % 10) / 10.f, (rand() % 10) / 10.f, 0.f, 0.f);
+		tempInstance->Transform.Rotation.X = (rand() % 600) / 10.f;
+		tempInstance->Transform.Rotation.Y = (rand() % 600) / 10.f;
+		tempInstance->Transform.Rotation.Z = (rand() % 600) / 10.f;
+
+		tempInstance->invisible = 0;
+		asteroidActiveList.push_back(tempInstance);
+		asteroidInActiveList.erase(asteroidInActiveList.begin());
 	}
 }
 
@@ -72,7 +100,7 @@ void AsteroidsGame::CreateNBullet(int n)
 	for (int i = 0; i < n; ++i)
 	{
 		auto &tempInstance = Create<Bullet>("bullet" + to_string(n + nExist));
-		tempInstance.hideBullet();//make it invisible at beginning
+		tempInstance.hide();//make it invisible at beginning
 		bulletList.push_back(&tempInstance);
 		nExist++;
 	}
@@ -142,6 +170,15 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 			lastShotTime = time.TotalSeconds();
 		}
 	}
+	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
+	{
+		static float lastAddTime = 0;
+		if (time.TotalSeconds() - lastAddTime >= 0.5)
+		{
+			showNAsteroid(1);
+			lastAddTime = time.TotalSeconds();
+		}
+	}
 }
 
 void AsteroidsGame::OnUpdate(const GameTime& time)
@@ -205,22 +242,68 @@ void AsteroidsGame::collisionDetect()
 	for (vector<Asteroid*>::size_type i = 0; i < asteroidActiveList.size(); ++i)
 	{
 		auto& asteroidLocate = asteroidActiveList.at(i)->Transform.Translation;
+		
+		//checking collision between asteroids and ship
+		if(checkCollision(*shipInstance,*asteroidActiveList.at(i)))
+		{
+			life -= 1;
+
+			shipInstance->reborn();
+			Log::Info << "Ship resurrected." << std::endl;
+
+			asteroidActiveList.at(i)->explode();
+			asteroidInActiveList.push_back(asteroidActiveList.at(i));
+			asteroidActiveList.erase(asteroidActiveList.begin() + i);
+			break;
+		}
+
+
+		//checking collision between asteroids and bullets
 		for (vector<Bullet*>::size_type j = 0; j < bulletList.size(); ++j)
 		{
-			auto& bulletLocate = bulletList.at(j)->Transform.Translation;
-			float distanceSquare = pow(bulletLocate.X - asteroidLocate.X, 2) + pow(bulletLocate.Y - asteroidLocate.Y, 2) + pow(bulletLocate.Z - asteroidLocate.Z, 2);
-			if (distanceSquare < pow(asteroidActiveList.at(i)->getRadius(), 2))
+			if (checkCollision(*asteroidActiveList.at(i), (*bulletList.at(j))))
 			{
-				Log::Info << "Collision between bullet and asteroid detected." << std::endl;
 				score += 10;
 
 				asteroidActiveList.at(i)->explode();
 				asteroidInActiveList.push_back(asteroidActiveList.at(i));
 				asteroidActiveList.erase(asteroidActiveList.begin() + i);
 
-				bulletList.at(j)->hideBullet();
+				bulletList.at(j)->hide();
 				break;
 			}
 		}
+	}
+}
+
+bool AsteroidsGame::checkCollision(const Ship& tempShip, const Asteroid& tempAsteroid)
+{
+	auto& shipLocate = tempShip.Transform.Translation;
+	auto& asteroidLocate = tempAsteroid.Transform.Translation;
+	float distanceSquare = pow(shipLocate.X - asteroidLocate.X, 2) + pow(shipLocate.Y - asteroidLocate.Y, 2) + pow(shipLocate.Z - asteroidLocate.Z, 2);
+	if (distanceSquare < tempAsteroid.getRadius())
+	{
+		Log::Info << "Collision between ship and asteroid detected." << std::endl;
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+bool AsteroidsGame::checkCollision(const Asteroid& tempAsteroid, const Bullet& tempbullet)
+{
+	auto& bulletLocate = tempbullet.Transform.Translation;
+	auto& asteroidLocate = tempAsteroid.Transform.Translation;
+	float distanceSquare = pow(bulletLocate.X - asteroidLocate.X, 2) + pow(bulletLocate.Y - asteroidLocate.Y, 2) + pow(bulletLocate.Z - asteroidLocate.Z, 2);
+	if (distanceSquare < tempAsteroid.getRadius())
+	{
+		Log::Info << "Collision between bullet and asteroid detected." << std::endl;
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
 	}
 }

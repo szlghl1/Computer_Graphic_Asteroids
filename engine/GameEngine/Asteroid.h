@@ -26,13 +26,13 @@ public:
 
 	Vector4 velocity;
 
-	inline void hideAsteroid() { Transform.Translation = Vector3(0, 0, 10); invisible = 1; }
+	inline void hide() { Transform.Translation = Vector3(0, 0, 10); invisible = 1; }
 	bool OnInitialize() override;
 	void OnUpdate(const GameTime& time) override;
 	void OnRender(const GameTime& time) override;
 	void explode();
 	//if you have asteroids in different Z, it should be modified
-	inline float getRadius() { return radius; }
+	inline float getRadius() const { return radius; }
 private:
 	//const float pi = 3.14159265358979f;
 

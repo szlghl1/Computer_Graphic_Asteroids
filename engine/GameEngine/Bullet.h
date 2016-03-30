@@ -20,7 +20,7 @@ public:
 		velocity = Vector4(-5*sin(radiusAngle), 5*cos(radiusAngle), 0.f, 0.f);
 	}
 
-	inline void hideBullet()
+	inline void hide()
 	{
 		setBullet(Vector3(0, 0, 10), 0);
 		invisible = 1;

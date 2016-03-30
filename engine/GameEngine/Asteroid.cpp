@@ -93,6 +93,6 @@ void Asteroid::OnRender(const GameTime& time)
 
 void Asteroid::explode()
 {
-	hideAsteroid();
+	hide();
 	Log::Info << "Asteroid exploded." << std::endl;
 }
