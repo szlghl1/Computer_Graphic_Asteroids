@@ -51,8 +51,10 @@ private:
 	Vector4 deriveBound(int z);
 	void shipShot();
 	void collisionDetect();
-	bool checkCollision(const Ship& tempShip, const Asteroid& tempAsteroid);
-	bool checkCollision(const Asteroid& tempAsteroid, const Bullet& tempbullet);
+	//bool checkCollision(const Ship& tempShip, const Asteroid& tempAsteroid);
+	//bool checkCollision(const Asteroid& tempAsteroid, const Bullet& tempbullet);
+	template<typename T>
+	bool checkCollision(const Asteroid& tempAsteroid, const T& tempT);
 	int score = 0;
 	int life = 5;
 };

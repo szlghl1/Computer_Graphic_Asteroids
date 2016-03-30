@@ -81,7 +81,7 @@ void AsteroidsGame::showNAsteroid(int n)
 			tempInstance->Transform.Translation.X = (rand() % 100) / 10.f;
 			tempInstance->Transform.Translation.Y = (rand() % 100) / 20.f;
 			tempInstance->Transform.Translation.Z = -20.f;
-		} while (checkCollision(*shipInstance, *tempInstance));
+		} while (checkCollision(*tempInstance, *shipInstance));
 
 		tempInstance->velocity = Vector4((rand() % 10) / 10.f, (rand() % 10) / 10.f, 0.f, 0.f);
 		tempInstance->Transform.Rotation.X = (rand() % 600) / 10.f;
@@ -244,7 +244,7 @@ void AsteroidsGame::collisionDetect()
 		auto& asteroidLocate = asteroidActiveList.at(i)->Transform.Translation;
 		
 		//checking collision between asteroids and ship
-		if(checkCollision(*shipInstance,*asteroidActiveList.at(i)))
+		if(checkCollision(*asteroidActiveList.at(i), *shipInstance))
 		{
 			life -= 1;
 
@@ -276,30 +276,15 @@ void AsteroidsGame::collisionDetect()
 	}
 }
 
-bool AsteroidsGame::checkCollision(const Ship& tempShip, const Asteroid& tempAsteroid)
+template<typename T>
+bool AsteroidsGame::checkCollision(const Asteroid& tempAsteroid, const T& tempT) 
 {
-	auto& shipLocate = tempShip.Transform.Translation;
+	auto& tempTLocate = tempT.Transform.Translation;
 	auto& asteroidLocate = tempAsteroid.Transform.Translation;
-	float distanceSquare = pow(shipLocate.X - asteroidLocate.X, 2) + pow(shipLocate.Y - asteroidLocate.Y, 2) + pow(shipLocate.Z - asteroidLocate.Z, 2);
+	float distanceSquare = pow(tempTLocate.X - asteroidLocate.X, 2) + pow(tempTLocate.Y - asteroidLocate.Y, 2) + pow(tempTLocate.Z - asteroidLocate.Z, 2);
 	if (distanceSquare < tempAsteroid.getRadius())
 	{
-		Log::Info << "Collision between ship and asteroid detected." << std::endl;
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-}
-
-bool AsteroidsGame::checkCollision(const Asteroid& tempAsteroid, const Bullet& tempbullet)
-{
-	auto& bulletLocate = tempbullet.Transform.Translation;
-	auto& asteroidLocate = tempAsteroid.Transform.Translation;
-	float distanceSquare = pow(bulletLocate.X - asteroidLocate.X, 2) + pow(bulletLocate.Y - asteroidLocate.Y, 2) + pow(bulletLocate.Z - asteroidLocate.Z, 2);
-	if (distanceSquare < tempAsteroid.getRadius())
-	{
-		Log::Info << "Collision between bullet and asteroid detected." << std::endl;
+		Log::Info << "Collision detected." << std::endl;
 		return TRUE;
 	}
 	else
