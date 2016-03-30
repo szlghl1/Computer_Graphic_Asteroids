@@ -246,10 +246,17 @@ void AsteroidsGame::collisionDetect()
 		//checking collision between asteroids and ship
 		if(checkCollision(*asteroidActiveList.at(i), *shipInstance))
 		{
-			life -= 1;
-
-			shipInstance->reborn();
-			Log::Info << "Ship resurrected." << std::endl;
+			if (life - 1 >= 0)
+			{
+				life--;
+				shipInstance->reborn();
+				Log::Info << "Ship resurrected." << std::endl;
+			}
+			else
+			{
+				shipInstance->invisible = 1;
+				Log::Error << "Game over." << std::endl;
+			}
 
 			asteroidActiveList.at(i)->explode();
 			asteroidInActiveList.push_back(asteroidActiveList.at(i));

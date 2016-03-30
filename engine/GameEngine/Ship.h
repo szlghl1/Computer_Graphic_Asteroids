@@ -24,7 +24,7 @@ public:
     void OnUpdate(const GameTime& time) override;
     void OnRender(const GameTime& time) override;
     void ProcessInput(const GameTime& time);
-	inline void reborn() { Transform.Translation.X = 0; Transform.Translation.Y = 0; angleRadian = 0; }
+	void reborn();
 private:
 	const float pi = 3.14159265358979f;
 	const float max_speed = 8.0f;

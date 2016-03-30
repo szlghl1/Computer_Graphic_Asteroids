@@ -150,9 +150,12 @@ void Ship::ProcessInput(const GameTime& time)
 		acceleration.Y = 0;
     }
 }
-/*
-void Ship::shot()
+
+void Ship::reborn()
 {
-	Log::Info << "Ship shotted." << std::endl;
+	angleRadian = 0;
+	velocity = Vector4(0, 0, 0, 1);
+	acceleration = Vector4(0, 0, 0, 1);
+	Transform.Translation.X = 0; 
+	Transform.Translation.Y = 0;
 }
-*/
