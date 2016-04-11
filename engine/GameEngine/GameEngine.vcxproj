@@ -102,7 +102,6 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="Ship.cpp" />
-    <ClCompile Include="SimpleGame.cpp" />
     <ClCompile Include="ThirdParty\src\gl_core_4_3.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vectors.cpp" />
@@ -127,7 +126,6 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ScreenRenderer.h" />
     <ClInclude Include="Ship.h" />
-    <ClInclude Include="SimpleGame.h" />
     <ClInclude Include="ThirdParty\include\glfw3.h" />
     <ClInclude Include="ThirdParty\include\gl_core_4_3.hpp" />
     <ClInclude Include="Transform.h" />
@@ -136,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\primitive.frag.glsl" />
+    <None Include="Shaders\primitive.geom.glsl" />
     <None Include="Shaders\primitive.vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

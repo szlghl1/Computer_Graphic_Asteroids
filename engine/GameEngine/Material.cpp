@@ -22,7 +22,7 @@ void Material::SetUniforms(const GameTime& time)
 }
 
 
-bool Material::Build(string vertexShaderSource, string fragmentShaderSource)
+bool Material::Build(string vertexShaderSource, string fragmentShaderSource, string geometryShaderSource)
 {
 	check_gl_error();
 
@@ -58,14 +58,31 @@ bool Material::Build(string vertexShaderSource, string fragmentShaderSource)
 		Log::Error << "Fragment Shader compilation error\n" << fragmentShaderLog << endl;
 		return false;
 	}
+	
+	check_gl_error();
+	GLuint geometryShader = gl::CreateShader((GLenum)ShaderType::GeometryShader);
+	GLint geomSourceLength = (GLint)geometryShaderSource.length();
+	GLchar* geomSourceStr = (GLchar*)geometryShaderSource.c_str();
 
+	gl::ShaderSource(geometryShader, 1, &geomSourceStr, &geomSourceLength);
 
+	gl::CompileShader(geometryShader);
+	check_gl_error();
+
+	if (!CompileSuccessful(geometryShader))
+	{
+		auto geometryShaderLog = GetShaderLog(geometryShader);
+		Log::Error << "Geometry Shader compilation error\n" << geometryShaderLog << endl;
+		return false;
+	}
+	
 	/// link the shaders into a program
 	/// at minimum, a program MUST have a vertex shader and a fragment shader
 	m_program = gl::CreateProgram();
 
 	gl::AttachShader(m_program, vertexShader);
 	gl::AttachShader(m_program, fragmentShader);
+	gl::AttachShader(m_program, geometryShader);
 
 	check_gl_error();
 
@@ -74,6 +91,19 @@ bool Material::Build(string vertexShaderSource, string fragmentShaderSource)
 	check_gl_error();
 
 	Log::Info << "Successfully built program.\n";
+
+	GLint* a = new GLint;
+	gl::GetProgramiv( m_program, gl::LINK_STATUS,a);
+	if (*a)
+	{
+		Log::Info << "Successfully linked program." << std::endl;
+	}
+	else
+	{
+		Log::Error << "Failed linked program.\nPress a Key to exit." << std::endl;
+		getchar();
+		exit(0);
+	}
 
 	return true;
 
@@ -158,6 +188,7 @@ bool Material::Build(const std::string& path)
 {
     auto vertFilename = path + ".vert.glsl";
     auto fragFilename = path + ".frag.glsl";
+	auto geomFilename = path + ".geom.glsl";
     
     if(!Files::Exists(vertFilename))
     {
@@ -167,10 +198,15 @@ bool Material::Build(const std::string& path)
     
     if(!Files::Exists(fragFilename))
     {
-        Log::Error << "Could not find fragment shader \"" << vertFilename << "\"\n";
+        Log::Error << "Could not find fragment shader \"" << fragFilename << "\"\n";
         return false;
     }
-    
+
+	if (!Files::Exists(geomFilename))
+	{
+		Log::Error << "Could not find geometry shader \"" << geomFilename << "\"\n";
+		return false;
+	}
     
     bool success = true;
     
@@ -180,10 +216,13 @@ bool Material::Build(const std::string& path)
         Log::Info << "Loading vertex shader \"" << vertFilename << "\"\n";
         auto vertexShaderSource = Files::Read(vertFilename);
         
-        Log::Info << "Loading fragment shader \"" << vertFilename << "\"\n";
+        Log::Info << "Loading fragment shader \"" << fragFilename << "\"\n";
         auto fragmentShaderSource = Files::Read(fragFilename);
+
+		Log::Info << "Loading geometry shader \"" << geomFilename << "\"\n";
+		auto geometryShaderSource = Files::Read(geomFilename);
         
-        success = Build(vertexShaderSource, fragmentShaderSource);
+        success = Build(vertexShaderSource, fragmentShaderSource, geometryShaderSource);
 
         if(!success)
         {

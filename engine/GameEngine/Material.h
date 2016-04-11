@@ -22,9 +22,8 @@ class Material : public GameObject
 public:
     PolygonMode FillType = PolygonMode::Fill;
     
-    
-    bool Build(std::string vertexShaderSource, std::string fragmentShaderSource);
-    
+	bool Build(std::string vertexShaderSource, std::string fragmentShaderSource, std::string geometryShaderSource);
+
     bool Build(const std::string& path);
     
     void OnDispose() override;
