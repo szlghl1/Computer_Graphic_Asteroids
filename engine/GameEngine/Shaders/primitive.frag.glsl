@@ -1,22 +1,23 @@
 #version 150
 
-in vec4 Color;
+in vec4 worldPosInGeom;
+
 out vec4 fragmentColor;
 
-in vec4 worldPos;
+uniform vec4 objectColor;
+uniform mat4 World;
+uniform mat4 View;
+uniform mat4 Projection;
 
 void main() 
 {
-	vec3 normal = normalize(cross(dFdx(worldPos).xyz,dFdy(worldPos).xyz));
+	vec3 normal = normalize(cross(dFdx(worldPosInGeom).xyz,dFdy(worldPosInGeom).xyz));
 
 	vec3 lightDirection = normalize(vec3(0.5,1,-1));
 
 	float intensity = dot(normal, lightDirection);
 
-	//vec3 lightColor = vec3(0.5,0,0);
+	vec4 baseLight = normalize(objectColor) * 0.3;
 
-	vec4 baseLight = normalize(Color) * 0.3;
-
-    //fragmentColor = vec4(lightColor * intensity + vec3(0.5,0,0),1);
-	fragmentColor = vec4(((Color * intensity + baseLight).xyz),1);
+	fragmentColor = vec4(((objectColor * intensity + baseLight).xyz),1);
 }

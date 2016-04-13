@@ -80,9 +80,9 @@ void Ship::OnUpdate(const GameTime& time)
 
 void Ship::OnRender(const GameTime& time)
 {
-    
     auto& cam = Game::Camera;
 	m_material->Bind();
+	explodingTiming(time);
 	m_material->SetUniform("World", Transform.GetMatrix());
     m_material->SetUniform("View",cam.GetViewMatrix());
     m_material->SetUniform("Projection",cam.GetProjectionMatrix());
@@ -151,6 +151,14 @@ void Ship::ProcessInput(const GameTime& time)
     }
 }
 
+void Ship::explode(const GameTime & t)
+{
+	velocity = Vector4(0, 0, 0, 0);
+	exploding = true;
+	beginningExplodingTime = t.TotalSeconds();
+	Log::Info << "Ship exploded." << std::endl;
+}
+
 void Ship::reborn()
 {
 	angleRadian = 0;
@@ -159,3 +167,21 @@ void Ship::reborn()
 	Transform.Translation.X = 0; 
 	Transform.Translation.Y = 0;
 }
+
+void Ship::explodingTiming(const GameTime & t)
+{
+	if (exploding)
+	{
+		if (t.TotalSeconds() - beginningExplodingTime > shipExplodingPeriod)
+		{
+			exploding = false;
+			m_material->SetUniform("Exploding", 0);
+			reborn();
+		}
+		else
+		{
+			m_material->SetUniform("Exploding", 1);
+		}
+	}
+}
+

@@ -3,18 +3,18 @@
 uniform mat4 World;
 uniform mat4 View;
 uniform mat4 Projection;
-uniform vec4 objectColor;
+//uniform vec4 objectColor;
 in vec3 Pos;
-out vec4 worldPos;
-out vec4 Color;
+out vec4 worldPosInVert;
+//out vec4 Color;
 
 void main()
 {
     vec4 position = vec4(Pos,1);
     
-    worldPos = World * position;
+    worldPosInVert = World * position;
     
     gl_Position = Projection * View * World * position;
 
-	Color = objectColor;
+	//Color = objectColor;
 }

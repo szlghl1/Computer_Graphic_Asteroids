@@ -85,14 +85,34 @@ void Asteroid::OnRender(const GameTime& time)
 {
 	auto& cam = Game::Camera;
 	m_material->Bind();
+	explodingTiming(time);
 	m_material->SetUniform("World", Transform.GetMatrix());
 	m_material->SetUniform("View", cam.GetViewMatrix());
 	m_material->SetUniform("Projection", cam.GetProjectionMatrix());
 	m_material->SetUniform("objectColor",color);
 }
 
-void Asteroid::explode()
+void Asteroid::explode(const GameTime & t)
 {
-	hide();
+	velocity = Vector4(0, 0, 0, 0);
+	exploding = true; 
+	beginningExplodingTime = t.TotalSeconds();
 	Log::Info << "Asteroid exploded." << std::endl;
+}
+
+void Asteroid::explodingTiming(const GameTime & t)
+{
+	if (exploding)
+	{
+		if (t.TotalSeconds() - beginningExplodingTime > asteroidExplodingPeriod)
+		{
+			exploding = false;
+			m_material->SetUniform("Exploding", 0);
+			hide();
+		}
+		else
+		{
+			m_material->SetUniform("Exploding", 1);
+		}
+	}
 }

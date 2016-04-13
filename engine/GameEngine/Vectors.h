@@ -79,9 +79,9 @@ struct Vector3 : public Vector2
     template<typename T>
     inline Vector3& operator=(const T& rval)
     {
-        X = rval;
-        Y = rval;
-        Z = rval;
+        X = static_cast<float>(rval);
+        Y = static_cast<float>(rval);
+        Z = static_cast<float>(rval);
         
         return *this;
     }

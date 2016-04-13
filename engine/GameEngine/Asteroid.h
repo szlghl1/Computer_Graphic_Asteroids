@@ -8,6 +8,8 @@
 #include "Mesh.h"
 #include "Matrix.h"
 
+const float asteroidExplodingPeriod = 5;
+
 class Asteroid : public WorldEntity
 {
 public:
@@ -30,7 +32,7 @@ public:
 	bool OnInitialize() override;
 	void OnUpdate(const GameTime& time) override;
 	void OnRender(const GameTime& time) override;
-	void explode();
+	void explode(const GameTime& t) override;
 	//if you have asteroids in different Z, it should be modified
 	inline float getRadius() const { return radius; }
 private:
@@ -45,6 +47,7 @@ private:
 	Vector4 color = Vector4(0, 0.5, 0.5, 0);
 
 	float radius = 1;
+	void explodingTiming(const GameTime& t) override;
 };
 
 #endif /* Asteroid_hpp */

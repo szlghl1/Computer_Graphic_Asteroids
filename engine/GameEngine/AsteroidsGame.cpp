@@ -184,7 +184,7 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 void AsteroidsGame::OnUpdate(const GameTime& time)
 {
 	updateBound();
-	collisionDetect(); 
+	collisionDetect(time); 
 	auto title = "Time: " + to_string(time.TotalSeconds()) + " Score: " + to_string(score) + " Life: " + to_string(life);
 	glfwSetWindowTitle(m_window, title.c_str());
 }
@@ -237,7 +237,7 @@ void AsteroidsGame::shipShot()
 	Log::Info << "Ship shotted a bullet." << std::endl;
 }
 
-void AsteroidsGame::collisionDetect()
+void AsteroidsGame::collisionDetect(const GameTime t)
 {
 	for (vector<Asteroid*>::size_type i = 0; i < asteroidActiveList.size(); ++i)
 	{
@@ -249,7 +249,7 @@ void AsteroidsGame::collisionDetect()
 			if (life - 1 >= 0)
 			{
 				life--;
-				shipInstance->reborn();
+				shipInstance->explode(t);
 				Log::Info << "Ship resurrected." << std::endl;
 			}
 			else
@@ -258,7 +258,7 @@ void AsteroidsGame::collisionDetect()
 				Log::Error << "Game over." << std::endl;
 			}
 
-			asteroidActiveList.at(i)->explode();
+			asteroidActiveList.at(i)->explode(t);
 			asteroidInActiveList.push_back(asteroidActiveList.at(i));
 			asteroidActiveList.erase(asteroidActiveList.begin() + i);
 			break;
@@ -272,7 +272,7 @@ void AsteroidsGame::collisionDetect()
 			{
 				score += 10;
 
-				asteroidActiveList.at(i)->explode();
+				asteroidActiveList.at(i)->explode(t);
 				asteroidInActiveList.push_back(asteroidActiveList.at(i));
 				asteroidActiveList.erase(asteroidActiveList.begin() + i);
 

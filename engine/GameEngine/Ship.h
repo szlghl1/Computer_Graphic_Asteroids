@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Matrix.h"
 
+const float shipExplodingPeriod = 2;
 
 class Ship : public WorldEntity
 {
@@ -24,6 +25,7 @@ public:
     void OnUpdate(const GameTime& time) override;
     void OnRender(const GameTime& time) override;
     void ProcessInput(const GameTime& time);
+	void explode(const GameTime& t) override;
 	void reborn();
 private:
 	const float pi = 3.14159265358979f;
@@ -40,6 +42,7 @@ private:
 	std::vector<float> vertices;
 	std::vector<GLushort> indices;
 	float upBound, leftBound, rightBound, bottomBound;
+	void explodingTiming(const GameTime & t) override;
 };
 
 
