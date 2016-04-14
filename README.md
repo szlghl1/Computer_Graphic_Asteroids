@@ -1,7 +1,7 @@
 "# SMU-CSE5382" 
 
-Some notes:
-This project should be built for x64 (64-bit). 32-bit builds will require different versions of GLFW. There is no reason to build 32-bit.
+This is an game "Asteroid" implemened in C++ and OpenGL.
 
-Under OSX, keep your library paths in mind when merging. If you experience linker errors after merging or cloning, make sure that your library paths are set correctly (project options | build phases | link with binaries | libglfw*)
+Please place executing file and folder "Shaders" in the same directory.
 
+Press Enter to pause or start. Press + to add asteroid.
