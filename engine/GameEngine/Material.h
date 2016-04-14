@@ -95,7 +95,7 @@ private:
 
 	bool CompileSuccessful(GLint program);
     
-    
+	GLint createShader(const std::string& source, ShaderType shaderType);
 };
 
 #endif /* Material_hpp */

@@ -26,56 +26,18 @@ bool Material::Build(string vertexShaderSource, string fragmentShaderSource, str
 {
 	check_gl_error();
 
-	GLuint vertexShader = gl::CreateShader((GLenum)ShaderType::VertexShader);
-	GLint vertSourceLength = (GLint)vertexShaderSource.length();
-	GLchar* vertSourceStr = (GLchar*)vertexShaderSource.c_str();
-
-	gl::ShaderSource(vertexShader, 1, &vertSourceStr, &vertSourceLength);
-
-	gl::CompileShader(vertexShader);
-
-	if (!CompileSuccessful(vertexShader))
-	{
-		auto vertexShaderlog = GetShaderLog(vertexShader);
-		Log::Error << "Vertex Shader compilation error\n" << vertexShaderlog << endl;
-		return false;
-	}
+	GLuint vertexShader = createShader(vertexShaderSource, ShaderType::VertexShader);
 
 	check_gl_error();
 
-	GLuint fragmentShader = gl::CreateShader((GLenum)ShaderType::FragmentShader);
-	GLint fragSourceLength = (GLint)fragmentShaderSource.length();
-	GLchar* fragmentSourceStr = (GLchar*)fragmentShaderSource.c_str();
+	GLuint fragmentShader = createShader(fragmentShaderSource, ShaderType::FragmentShader);
 
-	gl::ShaderSource(fragmentShader, 1, &fragmentSourceStr, &fragSourceLength);
-
-	gl::CompileShader(fragmentShader);
 	check_gl_error();
 
-	if (!CompileSuccessful(fragmentShader))
-	{
-		auto fragmentShaderLog = GetShaderLog(fragmentShader);
-		Log::Error << "Fragment Shader compilation error\n" << fragmentShaderLog << endl;
-		return false;
-	}
-	
-	check_gl_error();
-	GLuint geometryShader = gl::CreateShader((GLenum)ShaderType::GeometryShader);
-	GLint geomSourceLength = (GLint)geometryShaderSource.length();
-	GLchar* geomSourceStr = (GLchar*)geometryShaderSource.c_str();
+	GLuint geometryShader = createShader(geometryShaderSource, ShaderType::GeometryShader);
 
-	gl::ShaderSource(geometryShader, 1, &geomSourceStr, &geomSourceLength);
-
-	gl::CompileShader(geometryShader);
 	check_gl_error();
 
-	if (!CompileSuccessful(geometryShader))
-	{
-		auto geometryShaderLog = GetShaderLog(geometryShader);
-		Log::Error << "Geometry Shader compilation error\n" << geometryShaderLog << endl;
-		return false;
-	}
-	
 	/// link the shaders into a program
 	/// at minimum, a program MUST have a vertex shader and a fragment shader
 	m_program = gl::CreateProgram();
@@ -110,6 +72,7 @@ bool Material::Build(string vertexShaderSource, string fragmentShaderSource, str
 		getchar();
 		exit(0);
 	}
+	delete a;
 
 	return true;
 
@@ -187,6 +150,58 @@ bool Material::CompileSuccessful(GLint program)
 	gl::GetShaderiv(program, gl::COMPILE_STATUS, &status);
 
 	return status != (GLint)false;
+}
+
+GLint Material::createShader(const std::string & source, ShaderType shaderType)
+{
+	GLuint shader;
+	switch (shaderType)
+	{
+		case ShaderType::VertexShader:
+		{
+			shader = gl::CreateShader(gl::VERTEX_SHADER); break;
+		}
+		case ShaderType::FragmentShader:
+		{
+			shader = gl::CreateShader(gl::FRAGMENT_SHADER); break;
+		}
+		case ShaderType::GeometryShader:
+		{
+			shader = gl::CreateShader(gl::GEOMETRY_SHADER); break;
+		}
+	}
+	
+	GLint len = (GLint)source.length();
+	GLchar* sourceStr = (GLchar*)source.c_str();
+
+	gl::ShaderSource(shader, 1, &sourceStr, &len);
+
+	gl::CompileShader(shader);
+
+	if (!CompileSuccessful(shader))
+	{
+		auto shaderlog = GetShaderLog(shader);
+		switch (shaderType)
+		{
+			case ShaderType::VertexShader:
+			{
+				Log::Error << "VertexShader compilation error\n" << shaderlog << endl;
+			}
+			case ShaderType::FragmentShader:
+			{
+				Log::Error << "FragmentShader compilation error\n" << shaderlog << endl;
+			}
+			case ShaderType::GeometryShader:
+			{
+				Log::Error << "GeometryShader compilation error\n" << shaderlog << endl;
+			}
+		}
+		return false;
+	}
+	else
+	{
+		return shader;
+	}
 }
 
 
