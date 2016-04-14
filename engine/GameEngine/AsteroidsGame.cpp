@@ -135,7 +135,28 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 {
 	auto* window = Game::Instance().Window();
 
-	shipInstance->ProcessInput(time);
+	if (status == GameStatus::running)
+	{
+		shipInstance->ProcessInput(time);
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		{
+			static float lastShotTime = 0;
+			if (time.TotalSeconds() - lastShotTime >= 0.5)
+			{
+				shipShot();
+				lastShotTime = time.TotalSeconds();
+			}
+		}
+		if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
+		{
+			static float lastAddTime = 0;
+			if (time.TotalSeconds() - lastAddTime >= 0.5)
+			{
+				showNAsteroid(1);
+				lastAddTime = time.TotalSeconds();
+			}
+		}
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
 	{
@@ -161,24 +182,28 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 			camRotate = 2*PI;
 		}
 	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+
+	static bool lastStatusForEnter = false;
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
 	{
-		static float lastShotTime = 0;
-		if (time.TotalSeconds() - lastShotTime >= 0.5)
+		lastStatusForEnter = true;
+	}
+	else
+	{
+		if (lastStatusForEnter == true)
 		{
-			shipShot();
-			lastShotTime = time.TotalSeconds();
+			if (status == GameStatus::pause)
+			{
+				status = GameStatus::running;
+			}
+			else if (status == GameStatus::running)
+			{
+				status = GameStatus::pause;
+			}
+			lastStatusForEnter = false;
 		}
 	}
-	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
-	{
-		static float lastAddTime = 0;
-		if (time.TotalSeconds() - lastAddTime >= 0.5)
-		{
-			showNAsteroid(1);
-			lastAddTime = time.TotalSeconds();
-		}
-	}
+	
 }
 
 void AsteroidsGame::OnUpdate(const GameTime& time)

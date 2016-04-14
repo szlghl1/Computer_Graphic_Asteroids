@@ -15,6 +15,8 @@
 #include "GameObject.h"
 #include "Camera.h"
 
+enum class GameStatus{running,pause,over};
+
 class Game : public GameObject
 {
 public:
@@ -51,6 +53,8 @@ private:
 protected:
 
 	GLFWwindow* m_window;
+
+	GameStatus status;
     
 };
 

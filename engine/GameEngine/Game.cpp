@@ -91,6 +91,10 @@ bool Game::OnInitialize()
         return false;
     
     gl::ClearColor(0.2f,0,0.2f,1);
+
+	Time = GameTime();
+
+	status = GameStatus::running;
     
     m_isInitialized = true;
 
@@ -104,8 +108,6 @@ bool Game::Run()
         Log::Error << "Could not initialize GLFW window.\n";
         return false;
     }
-    
-    GameTime time;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_window))
@@ -113,20 +115,22 @@ bool Game::Run()
         /* Poll for and process events */
         glfwPollEvents();
 
-		ProcessInput(time);
+		ProcessInput(Time);
         
-        Update(time);
-        
+		if (status == GameStatus::running)
+		{
+			Update(Time);
+		}
         
         gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
         
-        Render(time);
+        Render(Time);
         
         /* Render here */
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
                            
-        time.Update();
+        Time.Update();
     }
     
     Dispose();
