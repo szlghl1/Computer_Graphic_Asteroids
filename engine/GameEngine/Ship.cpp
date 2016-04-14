@@ -91,6 +91,11 @@ void Ship::OnRender(const GameTime& time)
 
 void Ship::ProcessInput(const GameTime& time)
 {
+	if(exploding)
+	{
+		return;
+	}
+
 	angleVelocity = atan(velocity.X/velocity.Y);
 
     auto* window = Game::Instance().Window();
@@ -153,6 +158,7 @@ void Ship::ProcessInput(const GameTime& time)
 
 void Ship::explode(const GameTime & t)
 {
+	acceleration = Vector4(0, 0, 0, 0);
 	velocity = Vector4(0, 0, 0, 0);
 	exploding = true;
 	beginningExplodingTime = t.TotalSeconds();
