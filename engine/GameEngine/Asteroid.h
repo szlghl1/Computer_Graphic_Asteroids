@@ -8,7 +8,7 @@
 #include "Mesh.h"
 #include "Matrix.h"
 
-const float asteroidExplodingPeriod = 5;
+const float asteroidExplodingPeriod = 3;
 
 class Asteroid : public WorldEntity
 {

@@ -2,12 +2,13 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
-uniform float ExplosionFactor = 0.4f;
-uniform float GameTimeTotalSeconds = 0.f;
+uniform float GameTimeTotalSeconds;
+uniform float TimeBeginToExplode;
 uniform int Exploding = 0;
 
-in vec4 worldPosInVert[];
-out vec4 worldPosInGeom;
+out vec4 Normal;
+
+float ExplosionFactor = 0.2f;
 
 in gl_PerVertex
 {
@@ -18,32 +19,28 @@ in gl_PerVertex
 
 void main()
 {
+    vec3 v0 = gl_in[0].gl_Position.xyz;
+    vec3 v1 = gl_in[1].gl_Position.xyz;
+    vec3 v2 = gl_in[2].gl_Position.xyz;
+
+    Normal = vec4(normalize(cross(v2 - v1, v0 - v1)),1);
+
     vec4 center;
     center = (gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position) / 3;
-    if(Exploding == 0)
+
+    for (int i = 0; i < 3; ++i)
     {
-        for (int i = 0; i < 3; ++i)
+        if(Exploding == 0)
         {
             gl_Position = gl_in[i].gl_Position;
-
-            worldPosInGeom = worldPosInVert[i];
-        
-            EmitVertex();        
         }
-    }
-    else
-    {
-        for (int i = 0; i < 3; ++i)
+        else
         {
             vec4 shrinkDirect = normalize(gl_in[i].gl_Position - center);
 
-            gl_Position = gl_in[i].gl_Position - shrinkDirect * ExplosionFactor;
-        
-            EmitVertex();
-        
-            worldPosInGeom = worldPosInVert[i];
+            gl_Position = gl_in[i].gl_Position - (shrinkDirect * ExplosionFactor - Normal) * (GameTimeTotalSeconds - TimeBeginToExplode);
         }
+        EmitVertex();
     }
-
     EndPrimitive();
 }

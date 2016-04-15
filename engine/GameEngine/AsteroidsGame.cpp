@@ -184,7 +184,7 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 	}
 
 	static bool lastStatusForEnter = false;
-	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_KP_ENTER) == GLFW_PRESS)
 	{
 		lastStatusForEnter = true;
 	}

@@ -83,6 +83,7 @@ void Ship::OnRender(const GameTime& time)
     auto& cam = Game::Camera;
 	m_material->Bind();
 	explodingTiming(time);
+	m_material->SetUniform("GameTimeTotalSeconds", time.TotalSeconds());
 	m_material->SetUniform("World", Transform.GetMatrix());
     m_material->SetUniform("View",cam.GetViewMatrix());
     m_material->SetUniform("Projection",cam.GetProjectionMatrix());
@@ -176,6 +177,7 @@ void Ship::reborn()
 
 void Ship::explodingTiming(const GameTime & t)
 {
+	static bool flagForSendBeginningTime = true;
 	if (exploding)
 	{
 		if (t.TotalSeconds() - beginningExplodingTime > shipExplodingPeriod)
@@ -183,9 +185,15 @@ void Ship::explodingTiming(const GameTime & t)
 			exploding = false;
 			m_material->SetUniform("Exploding", 0);
 			reborn();
+			flagForSendBeginningTime = true;
 		}
 		else
 		{
+			if (flagForSendBeginningTime == true)
+			{
+				m_material->SetUniform("TimeBeginToExplode", t.TotalSeconds());
+				flagForSendBeginningTime = false;
+			}
 			m_material->SetUniform("Exploding", 1);
 		}
 	}
