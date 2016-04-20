@@ -200,7 +200,7 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 	}
 	else
 	{
-		if (lastStatusForEnter == true)
+		if (lastStatusForEnter == true)//means key was pressed down and released
 		{
 			if (status == GameStatus::pause)
 			{
@@ -209,6 +209,10 @@ void AsteroidsGame::ProcessInput(const GameTime& time)
 			else if (status == GameStatus::running)
 			{
 				status = GameStatus::pause;
+			}
+			else if (status == GameStatus::over)
+			{
+				reset();
 			}
 			lastStatusForEnter = false;
 		}
@@ -220,7 +224,7 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 {
 	updateBound();
 	collisionDetect(time); 
-	auto title = "Time: " + to_string(time.TotalSeconds()) + " Score: " + to_string(score) + " Life: " + to_string(life);
+	auto title = "Time: " + to_string(time.TotalSeconds()) + " Score: " + to_string(score) + " Life: " + to_string(life) + " Level: " + to_string(level);
 	glfwSetWindowTitle(m_window, title.c_str());
 }
 
@@ -290,7 +294,9 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 			else
 			{
 				shipInstance->explode(t);
+				status = GameStatus::over;
 				Log::Error << "Game over." << std::endl;
+				return;
 			}
 
 			asteroidActiveList.at(i)->explode(t);
@@ -323,15 +329,38 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 	}
 }
 
+void AsteroidsGame::reset()
+{
+	level = 0;
+	for (auto i = asteroidActiveList.begin(); i != asteroidActiveList.end(); i++)
+	{
+		(*i)->hide();
+		asteroidInActiveList.push_back(*i);
+	}
+	for (auto i = 0; i < asteroidActiveList.size(); i++)
+	{
+		asteroidActiveList.erase(asteroidActiveList.begin());
+	}
+	shipInstance->reborn();
+	score = 0;
+	life = initialLife;
+	levelUp();
+	status = GameStatus::running;
+}
+
 void AsteroidsGame::levelUp()
 {
 	level++;
 	switch (level)
 	{
-	case 1:showNAsteroid(2); break;
+	case 1:showNAsteroid(4); break;
 	case 2:showNAsteroid(4); break;
 	case 3:showNAsteroid(6); break;
-	case 4:showNAsteroid(8); break;
+	case 4:showNAsteroid(6); break;
+	case 5:showNAsteroid(8); break;
+	case 6:showNAsteroid(8); break;
+	case 7:showNAsteroid(10); break;
+	case 8:showNAsteroid(10); break;
 	default:
 		Log::Error << "You are doing so good that you are beyond the design of game" << std::endl;
 		break;

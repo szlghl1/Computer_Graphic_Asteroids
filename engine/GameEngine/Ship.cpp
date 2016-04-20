@@ -173,6 +173,7 @@ void Ship::reborn()
 	acceleration = Vector4(0, 0, 0, 1);
 	Transform.Translation.X = 0; 
 	Transform.Translation.Y = 0;
+	invisible = 0;
 }
 
 void Ship::explodingTiming(const GameTime & t)

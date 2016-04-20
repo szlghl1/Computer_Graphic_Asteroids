@@ -16,6 +16,7 @@
 
 const int numberOfBullet = 20;
 const int numberOfAsteroid = 10;
+const int initialLife = 1;
 
 class AsteroidsGame : public Game
 {
@@ -56,7 +57,7 @@ private:
 	template<typename T>
 	bool checkCollision(const Asteroid& tempAsteroid, const T& tempT);
 	int score = 0;
-	int life = 5;
+	int life = initialLife;
 	int level = 0;
 };
 #endif /* SimpleGame_hpp */
