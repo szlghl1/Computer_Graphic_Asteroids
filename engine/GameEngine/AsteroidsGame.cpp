@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -17,7 +18,6 @@ using namespace std;
 #include "Material.h"
 #include "Files.h"
 
-#include <cmath>
 
 bool AsteroidsGame::OnCreateScene()
 {
@@ -25,7 +25,7 @@ bool AsteroidsGame::OnCreateScene()
 	CreateNAsteroid(numberOfAsteroid);
 	CreateNBullet(numberOfBullet);
 
-	showNAsteroid(5);
+	levelUp();
 
     auto& cam = Game::Camera;
     
@@ -65,6 +65,10 @@ void AsteroidsGame::CreateNAsteroid(int n)
 
 void AsteroidsGame::showNAsteroid(int n)
 {
+	static std::default_random_engine dre(time(0));
+	static std::uniform_real_distribution<float> urd(0, 20);
+	static std::uniform_real_distribution<float> urd4V(0, 2);
+
 	for (int i = 0; i < n; ++i)
 	{
 		if (asteroidInActiveList.size() == 0)
@@ -73,20 +77,26 @@ void AsteroidsGame::showNAsteroid(int n)
 			return;
 		}
 
-		auto tempInstance = asteroidInActiveList.at(0);
+		auto& tempInstance = asteroidInActiveList.at(0);
 
-		//ensure asteroids will not appear at the same spot as ship
+		//ensure asteroids will not appear near ship
+		auto& tempTrans = tempInstance->Transform.Translation;
+		auto& shipTrans = shipInstance->Transform.Translation;
+		//float dSquare;
+		bool temp;
 		do
 		{
-			tempInstance->Transform.Translation.X = (rand() % 100) / 10.f;
-			tempInstance->Transform.Translation.Y = (rand() % 100) / 20.f;
-			tempInstance->Transform.Translation.Z = -20.f;
-		} while (checkCollision(*tempInstance, *shipInstance));
+			tempTrans.X = urd(dre);
+			tempTrans.Y = urd(dre) / 2;
+			tempTrans.Z = -20.f;
+			//dSquare = pow(tempTrans.X - shipTrans.X, 2) + pow(tempTrans.Y - shipTrans.Y, 2);
+			temp = checkCollision(*tempInstance, *shipInstance);
+		} while (temp);
 
-		tempInstance->velocity = Vector4((rand() % 10) / 10.f, (rand() % 10) / 10.f, 0.f, 0.f);
-		tempInstance->Transform.Rotation.X = (rand() % 600) / 10.f;
-		tempInstance->Transform.Rotation.Y = (rand() % 600) / 10.f;
-		tempInstance->Transform.Rotation.Z = (rand() % 600) / 10.f;
+		tempInstance->velocity = Vector4(urd4V(dre), urd4V(dre), 0.f, 0.f);
+		tempInstance->Transform.Rotation.X = urd(dre);
+		tempInstance->Transform.Rotation.Y = urd(dre);
+		tempInstance->Transform.Rotation.Z = urd(dre);
 
 		tempInstance->invisible = 0;
 		asteroidActiveList.push_back(tempInstance);
@@ -279,7 +289,7 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 			}
 			else
 			{
-				shipInstance->invisible = 1;
+				shipInstance->explode(t);
 				Log::Error << "Game over." << std::endl;
 			}
 
@@ -300,11 +310,31 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 				asteroidActiveList.at(i)->explode(t);
 				asteroidInActiveList.push_back(asteroidActiveList.at(i));
 				asteroidActiveList.erase(asteroidActiveList.begin() + i);
-
 				bulletList.at(j)->hide();
+
+				if (asteroidActiveList.empty())
+				{
+					levelUp();
+				}
+
 				break;
 			}
 		}
+	}
+}
+
+void AsteroidsGame::levelUp()
+{
+	level++;
+	switch (level)
+	{
+	case 1:showNAsteroid(2); break;
+	case 2:showNAsteroid(4); break;
+	case 3:showNAsteroid(6); break;
+	case 4:showNAsteroid(8); break;
+	default:
+		Log::Error << "You are doing so good that you are beyond the design of game" << std::endl;
+		break;
 	}
 }
 

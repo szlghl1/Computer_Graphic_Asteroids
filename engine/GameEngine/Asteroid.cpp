@@ -109,7 +109,6 @@ void Asteroid::explodingTiming(const GameTime & t)
 		if (t.TotalSeconds() - beginningExplodingTime > asteroidExplodingPeriod)
 		{
 			exploding = false;
-			m_material->SetUniform("Exploding", 0);
 			hide();
 			flagForSendBeginningTime = true;
 		}
@@ -120,7 +119,7 @@ void Asteroid::explodingTiming(const GameTime & t)
 				m_material->SetUniform("TimeBeginToExplode", t.TotalSeconds());
 				flagForSendBeginningTime = false;
 			}
-			m_material->SetUniform("Exploding", 1);
 		}
 	}
+	m_material->SetUniform("Exploding", exploding);
 }

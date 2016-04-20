@@ -52,9 +52,11 @@ private:
 	void shipShot();
 	void collisionDetect(const GameTime t);
 	void reset();
+	void levelUp();
 	template<typename T>
 	bool checkCollision(const Asteroid& tempAsteroid, const T& tempT);
 	int score = 0;
 	int life = 5;
+	int level = 0;
 };
 #endif /* SimpleGame_hpp */
