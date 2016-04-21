@@ -65,7 +65,7 @@ void AsteroidsGame::CreateNAsteroid(int n)
 
 void AsteroidsGame::showNAsteroid(int n)
 {
-	static std::default_random_engine dre(time(0));
+	static std::default_random_engine dre(static_cast<int>(time(0)));
 	static std::uniform_real_distribution<float> urd(0, 20);
 	static std::uniform_real_distribution<float> urd4V(0, 2);
 
@@ -91,6 +91,8 @@ void AsteroidsGame::showNAsteroid(int n)
 			tempTrans.Z = -20.f;
 			//dSquare = pow(tempTrans.X - shipTrans.X, 2) + pow(tempTrans.Y - shipTrans.Y, 2);
 			temp = checkCollision(*tempInstance, *shipInstance);
+			if (temp)
+				temp = 1;
 		} while (temp);
 
 		tempInstance->velocity = Vector4(urd4V(dre), urd4V(dre), 0.f, 0.f);
@@ -224,7 +226,8 @@ void AsteroidsGame::OnUpdate(const GameTime& time)
 {
 	updateBound();
 	collisionDetect(time); 
-	auto title = "Time: " + to_string(time.TotalSeconds()) + " Score: " + to_string(score) + " Life: " + to_string(life) + " Level: " + to_string(level);
+	auto title = "Time: " + to_string(time.TotalSeconds()) + " Score: " + to_string(score);
+	title += " Life: " + to_string(life) + " Level: " + to_string(level);
 	glfwSetWindowTitle(m_window, title.c_str());
 }
 
@@ -278,54 +281,57 @@ void AsteroidsGame::shipShot()
 
 void AsteroidsGame::collisionDetect(const GameTime t)
 {
-	for (vector<Asteroid*>::size_type i = 0; i < asteroidActiveList.size(); ++i)
+	//checking collision between asteroids and ship
+	while (1)
 	{
-		auto& asteroidLocate = asteroidActiveList.at(i)->Transform.Translation;
-		
-		//checking collision between asteroids and ship
-		if(checkCollision(*asteroidActiveList.at(i), *shipInstance))
+		vector<Asteroid*>::iterator i = find_if(asteroidActiveList.begin(), asteroidActiveList.end(), 
+			[this](Asteroid* a) {return this->checkCollision(*a, *(this->shipInstance)); });
+		if (i == asteroidActiveList.end())
 		{
-			if (life - 1 >= 0)
-			{
-				life--;
-				shipInstance->explode(t);
-				Log::Info << "Ship resurrected." << std::endl;
-			}
-			else
-			{
-				shipInstance->explode(t);
-				status = GameStatus::over;
-				Log::Error << "Game over." << std::endl;
-				return;
-			}
-
-			asteroidActiveList.at(i)->explode(t);
-			asteroidInActiveList.push_back(asteroidActiveList.at(i));
-			asteroidActiveList.erase(asteroidActiveList.begin() + i);
 			break;
 		}
 
+		auto pAsteroid = *i;
+		pAsteroid->explode(t);
+		asteroidInActiveList.push_back(pAsteroid);
+		asteroidActiveList.erase(i);
 
-		//checking collision between asteroids and bullets
-		for (vector<Bullet*>::size_type j = 0; j < bulletList.size(); ++j)
+		if (life - 1 >= 0)
 		{
-			if (checkCollision(*asteroidActiveList.at(i), (*bulletList.at(j))))
-			{
-				score += 10;
-
-				asteroidActiveList.at(i)->explode(t);
-				asteroidInActiveList.push_back(asteroidActiveList.at(i));
-				asteroidActiveList.erase(asteroidActiveList.begin() + i);
-				bulletList.at(j)->hide();
-
-				if (asteroidActiveList.empty())
-				{
-					levelUp();
-				}
-
-				break;
-			}
+			life--;
+			shipInstance->explode(t);
+			Log::Info << "Ship resurrected." << std::endl;
 		}
+		else
+		{
+			shipInstance->explode(t);
+			status = GameStatus::over;
+			Log::Error << "Game over." << std::endl;
+			return;
+		}
+	}
+
+	//checking collision between asteroids and bullets
+	for (auto i = bulletList.begin(); i != bulletList.end(); i++)
+	{
+		vector<Asteroid*>::iterator j = find_if(asteroidActiveList.begin(), asteroidActiveList.end(),
+			[this,i](Asteroid* a) {return this->checkCollision(*a, **i); });
+		if (j == asteroidActiveList.end())
+		{
+			continue;
+		}
+
+		auto pBullet = *i;
+		auto pAsteroid = *j;
+		pBullet->hide();
+		pAsteroid->explode(t);
+		asteroidInActiveList.push_back(pAsteroid);
+		asteroidActiveList.erase(j);
+	}
+
+	if (asteroidActiveList.empty())
+	{
+		levelUp();
 	}
 }
 
