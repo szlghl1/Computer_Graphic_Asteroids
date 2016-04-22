@@ -30,7 +30,7 @@ bool AsteroidsGame::OnCreateScene()
 
     auto& cam = Game::Camera;
     
-    //cam.Transform.Translation.Z = 1;//20
+    cam.Transform.Translation.Z = 20;
 
 	glfwSetWindowSizeCallback(m_window, window_size_callback);
 
@@ -89,7 +89,7 @@ void AsteroidsGame::showNAsteroid(int n)
 		{
 			tempTrans.X = urd(dre);
 			tempTrans.Y = urd(dre) / 2;
-			tempTrans.Z = -20.f;
+			tempTrans.Z = 0.f;
 			//dSquare = pow(tempTrans.X - shipTrans.X, 2) + pow(tempTrans.Y - shipTrans.Y, 2);
 			temp = checkCollision(*tempInstance, *shipInstance);
 			if (temp)
@@ -253,6 +253,7 @@ Vector4 AsteroidsGame::deriveBound(int z)
 {
 	//it works if camera has not rotated
 	//if camera translated along Z axis, just add camera.z to z
+	z -= Camera.Transform.Translation.Z;
 	float upBound = -z*tan(Game::Camera.FieldOfView/2);
 	Game::Camera.GetProjectionMatrix();
 	float rightBound = upBound * Game::Camera.Aspect;

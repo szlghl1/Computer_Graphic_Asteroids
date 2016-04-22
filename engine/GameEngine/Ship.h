@@ -17,8 +17,7 @@ public:
 		acceleration = Vector4(0, 0, 0, 0);
 		velocity = Vector4(0, 0, 0, 0);
 		angleRadian = 0;
-		Transform.Translation.Z = -20;
-		//Transform.Scale = (0.1, 0.1, 0.1);
+		Transform.Translation.Z = 0.f;
     }
     
     bool OnInitialize() override;

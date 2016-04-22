@@ -16,7 +16,7 @@
 
 const int numberOfBullet = 20;
 const int numberOfAsteroid = 10;
-const int initialLife = 1;
+const int initialLife = 3;
 
 class AsteroidsGame : public Game
 {

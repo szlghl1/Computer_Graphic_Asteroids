@@ -17,7 +17,6 @@ public:
 	Asteroid()
 	{
 		velocity = Vector4(0.5f, 0.8f, 0.f, 0.f);
-		Transform.Translation.Z = -20;
 		float rotateX = 0.4f;
 		float rotateY = 0.7f;
 		float rotateZ = 0.3f;
@@ -28,7 +27,7 @@ public:
 
 	Vector4 velocity;
 
-	inline void hide() { Transform.Translation = Vector3(0, 0, 10); invisible = 1; }
+	inline void hide() { Transform.Translation = Vector3(0, 0, 30); invisible = 1; }
 	bool OnInitialize() override;
 	void OnUpdate(const GameTime& time) override;
 	void OnRender(const GameTime& time) override;
