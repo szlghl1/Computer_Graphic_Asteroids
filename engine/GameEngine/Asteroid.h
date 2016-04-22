@@ -26,6 +26,7 @@ public:
 	}
 
 	Vector4 velocity;
+	bool exploding = false;
 
 	inline void hide() { Transform.Translation = Vector3(0, 0, 30); invisible = 1; }
 	bool OnInitialize() override;
@@ -45,7 +46,6 @@ private:
 
 	float radius = 1;
 	void explodingTiming(const GameTime& t);
-	bool exploding = false;
 	float beginningExplodingTime = 0;
 	bool flagForSendBeginningTime = true;
 };

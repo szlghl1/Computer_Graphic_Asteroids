@@ -251,7 +251,7 @@ Vector4 AsteroidsGame::deriveBound(int z)
 	//if camera translated along Z axis, just add camera.z to z
 	if (z != 0)
 		DEBUG_BREAK;
-	z -= Camera.Transform.Translation.Z;
+	z -= static_cast<int>(Camera.Transform.Translation.Z);
 	float upBound = -z*tan(Game::Camera.FieldOfView/2);
 	Game::Camera.GetProjectionMatrix();
 	float rightBound = upBound * Game::Camera.Aspect;
@@ -269,30 +269,36 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 	//checking collision between asteroids and ship
 	while (1)
 	{
-		vector<Asteroid*>::iterator i = find_if(asteroidActiveList.begin(), asteroidActiveList.end(), 
-			[this](Asteroid* a) {return this->checkCollision(*a, *(this->shipInstance)); });
-		if (i == asteroidActiveList.end())
+		if (shipInstance->exploding)
 		{
 			break;
 		}
-
-		auto pAsteroid = *i;
-		asteroidActiveList.erase(i);
-		asteroidInActiveList.push_back(pAsteroid);
-		pAsteroid->explode(t);
-
-		if (life - 1 >= 0)
-		{
-			life--;
-			shipInstance->explode(t);
-			Log::Info << "Ship resurrected." << std::endl;
-		}
 		else
 		{
-			shipInstance->explode(t);
-			status = GameStatus::over;
-			Log::Error << "Game over." << std::endl;
-			return;
+			vector<Asteroid*>::iterator i = find_if(asteroidActiveList.begin(), asteroidActiveList.end(),
+				[this](Asteroid* a) {return this->checkCollision(*a, *(this->shipInstance)); });
+			if (i == asteroidActiveList.end())
+			{
+				break;
+			}
+
+			auto pAsteroid = *i;
+			asteroidActiveList.erase(i);
+			asteroidInActiveList.push_back(pAsteroid);
+			pAsteroid->explode(t);
+			if (life - 1 >= 0)
+			{
+				life--;
+				shipInstance->explode(t);
+				Log::Info << "Ship resurrected." << std::endl;
+			}
+			else
+			{
+				shipInstance->explode(t);
+				status = GameStatus::over;
+				Log::Error << "Game over." << std::endl;
+				return;
+			}
 		}
 	}
 
@@ -357,10 +363,9 @@ void AsteroidsGame::levelUp()
 	}
 }
 
-template<typename T>
-bool AsteroidsGame::checkCollision(const Asteroid& tempAsteroid, const T& tempT) 
+bool AsteroidsGame::checkCollision(const Asteroid& tempAsteroid, const WorldEntity& e) 
 {
-	auto& tempTLocate = tempT.Transform.Translation;
+	auto& tempTLocate = e.Transform.Translation;
 	auto& asteroidLocate = tempAsteroid.Transform.Translation;
 	float distanceSquare = pow(tempTLocate.X - asteroidLocate.X, 2) + pow(tempTLocate.Y - asteroidLocate.Y, 2) + pow(tempTLocate.Z - asteroidLocate.Z, 2);
 	if (distanceSquare < tempAsteroid.getRadius())

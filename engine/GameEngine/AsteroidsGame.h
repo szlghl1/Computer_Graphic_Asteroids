@@ -53,8 +53,7 @@ private:
 	void collisionDetect(const GameTime t);
 	void reset();
 	void levelUp();
-	template<typename T>
-	bool checkCollision(const Asteroid& tempAsteroid, const T& tempT);
+	bool checkCollision(const Asteroid& tempAsteroid, const WorldEntity& e);
 	int score = 0;
 	int life = initialLife;
 	int level = 0;

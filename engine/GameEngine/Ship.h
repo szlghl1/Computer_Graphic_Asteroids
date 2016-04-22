@@ -26,6 +26,7 @@ public:
     void ProcessInput(const GameTime& time);
 	void explode(const GameTime& t);
 	void reborn();
+	bool exploding = false;
 private:
 	const float pi = 3.14159265358979f;
 	const float max_speed = 8.0f;
@@ -42,7 +43,6 @@ private:
 	std::vector<GLushort> indices;
 	float upBound, leftBound, rightBound, bottomBound;
 	void explodingTiming(const GameTime & t);
-	bool exploding = false;
 	float beginningExplodingTime = 0;
 };
 

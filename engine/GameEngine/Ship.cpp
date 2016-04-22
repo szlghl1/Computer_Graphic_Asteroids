@@ -104,7 +104,7 @@ void Ship::ProcessInput(const GameTime& time)
     {
 		if (angleRadian <= 2 * pi)
 		{
-			angleRadian += 0.01f;
+			angleRadian += 0.015f;
 		}
 		else
 		{
@@ -117,7 +117,7 @@ void Ship::ProcessInput(const GameTime& time)
 
 		if (angleRadian >= 0)
 		{
-			angleRadian -= 0.01f;
+			angleRadian -= 0.015f;
 		}
 		else
 		{
