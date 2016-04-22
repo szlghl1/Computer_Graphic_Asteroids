@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include <ctime>
 
 using namespace std;
 
@@ -126,21 +127,6 @@ Bullet& AsteroidsGame::showBullet(Vector3 coor, float radiusAngle)
 	bullet->invisible = 0;
 	nextIndex++;
 	return *bullet;
-	/*
-	Bullet *bullet = nullptr;
-	if (bulletInActiveList.size() != 0)
-	{
-		bullet = bulletInActiveList.at(0);
-	}
-	else
-	{
-		Log::Error << "Inactive bullet is not enough to shot." << std::endl;
-	}
-	bullet->invisible = 0;
-	bullet->setBullet(shipInstance->Transform.Translation, shipInstance->Transform.Rotation.Z);
-	bulletActiveList.push_back(bullet);
-	return *bullet;
-	*/
 }
 
 void AsteroidsGame::ProcessInput(const GameTime& time)

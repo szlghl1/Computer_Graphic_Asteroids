@@ -9,7 +9,6 @@
 
 bool Asteroid::OnInitialize()
 {
-	//auto& mesh = Create<Mesh>("Asteroid-mesh");
 	auto& mesh = Create<Mesh>(Name+"-mesh");
 
 	float X = 0.525731112119133606f;
@@ -58,7 +57,6 @@ bool Asteroid::OnInitialize()
 
 	m_mesh = &mesh;
 
-	//auto& material = Create<class Material>("Asteroid-material");
 	auto& material = Create<class Material>(Name + "-material");
 	
 	m_material = &material;
@@ -103,7 +101,7 @@ void Asteroid::explode(const GameTime & t)
 
 void Asteroid::explodingTiming(const GameTime & t)
 {
-	static bool flagForSendBeginningTime = true;
+	m_material->SetUniform("Exploding", exploding);
 	if (exploding)
 	{
 		if (t.TotalSeconds() - beginningExplodingTime > asteroidExplodingPeriod)
@@ -116,10 +114,9 @@ void Asteroid::explodingTiming(const GameTime & t)
 		{
 			if (flagForSendBeginningTime == true)
 			{
-				m_material->SetUniform("TimeBeginToExplode", t.TotalSeconds());
+  				m_material->SetUniform("TimeBeginToExplode", t.TotalSeconds());
 				flagForSendBeginningTime = false;
 			}
 		}
 	}
-	m_material->SetUniform("Exploding", exploding);
 }

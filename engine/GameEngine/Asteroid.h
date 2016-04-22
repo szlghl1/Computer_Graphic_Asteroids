@@ -32,12 +32,10 @@ public:
 	bool OnInitialize() override;
 	void OnUpdate(const GameTime& time) override;
 	void OnRender(const GameTime& time) override;
-	void explode(const GameTime& t) override;
+	void explode(const GameTime& t);
 	//if you have asteroids in different Z, it should be modified
 	inline float getRadius() const { return radius; }
 private:
-	//const float pi = 3.14159265358979f;
-
 	Mesh* m_mesh;
 	Material* m_material;
 
@@ -47,7 +45,10 @@ private:
 	Vector4 color = Vector4(0, 0.5, 0.5, 0);
 
 	float radius = 1;
-	void explodingTiming(const GameTime& t) override;
+	void explodingTiming(const GameTime& t);
+	bool exploding = false;
+	float beginningExplodingTime = 0;
+	bool flagForSendBeginningTime = true;
 };
 
 #endif /* Asteroid_hpp */

@@ -13,10 +13,6 @@ public:
 protected:
 	float upBound, leftBound, rightBound, bottomBound;
 	virtual void checkBound();
-	bool exploding;
-	float beginningExplodingTime = 0;
-	virtual void explode(const GameTime& t) { ; }
-	virtual void explodingTiming(const GameTime& t) { ; }
 };
 
 #endif /* WorldEntity_hpp */

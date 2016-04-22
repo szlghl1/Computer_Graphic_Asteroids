@@ -36,9 +36,9 @@ void main()
         }
         else
         {
-            vec4 shrinkDirect = normalize(gl_in[i].gl_Position - center);
+            vec4 shrinkDirect = normalize(center - gl_in[i].gl_Position);
 
-            gl_Position = gl_in[i].gl_Position - (shrinkDirect * ExplosionFactor - Normal) * (GameTimeTotalSeconds - TimeBeginToExplode);
+            gl_Position = gl_in[i].gl_Position + (shrinkDirect * ExplosionFactor + Normal) * (GameTimeTotalSeconds - TimeBeginToExplode);
         }
         EmitVertex();
     }
