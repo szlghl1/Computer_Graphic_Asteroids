@@ -32,7 +32,6 @@ public:
 	std::string ShaderFolder;
     
     Ship& CreateShip();
-	Asteroid& CreateOneAsteroid();
 	void CreateNBullet(int n);
 	Bullet& showBullet(Vector3 coor, float radiusAngle);
 	void CreateNAsteroid(int n);

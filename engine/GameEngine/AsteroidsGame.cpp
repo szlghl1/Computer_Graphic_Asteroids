@@ -22,15 +22,14 @@ using namespace std;
 
 bool AsteroidsGame::OnCreateScene()
 {
+	auto& cam = Game::Camera;
+	cam.Transform.Translation.Z = 20;
+
     CreateShip();
 	CreateNAsteroid(numberOfAsteroid);
 	CreateNBullet(numberOfBullet);
 
 	levelUp();
-
-    auto& cam = Game::Camera;
-    
-    cam.Transform.Translation.Z = 20;
 
 	glfwSetWindowSizeCallback(m_window, window_size_callback);
 
@@ -43,13 +42,6 @@ Ship& AsteroidsGame::CreateShip()
 	auto &ship = Create<Ship>("ship");
 	shipInstance = &ship;
     return *shipInstance;
-}
-
-Asteroid& AsteroidsGame::CreateOneAsteroid()
-{
-	auto &asteroid = Create<Asteroid>("asteroid");
-	asteroidActiveList.push_back(&asteroid);
-	return asteroid;
 }
 
 void AsteroidsGame::CreateNAsteroid(int n)
@@ -66,8 +58,10 @@ void AsteroidsGame::CreateNAsteroid(int n)
 
 void AsteroidsGame::showNAsteroid(int n)
 {
+	auto bound = deriveBound(0);
 	static std::default_random_engine dre(static_cast<int>(time(0)));
-	static std::uniform_real_distribution<float> urd(0, 20);
+	static std::uniform_real_distribution<float> urd4H(0, bound.X);
+	static std::uniform_real_distribution<float> urd4W(0, bound.W);
 	static std::uniform_real_distribution<float> urd4V(0, 2);
 
 	for (int i = 0; i < n; ++i)
@@ -87,23 +81,21 @@ void AsteroidsGame::showNAsteroid(int n)
 		bool temp;
 		do
 		{
-			tempTrans.X = urd(dre);
-			tempTrans.Y = urd(dre) / 2;
+			tempTrans.X = urd4W(dre);
+			tempTrans.Y = urd4H(dre) / 2;
 			tempTrans.Z = 0.f;
-			//dSquare = pow(tempTrans.X - shipTrans.X, 2) + pow(tempTrans.Y - shipTrans.Y, 2);
 			temp = checkCollision(*tempInstance, *shipInstance);
-			if (temp)
-				temp = 1;
 		} while (temp);
 
 		tempInstance->velocity = Vector4(urd4V(dre), urd4V(dre), 0.f, 0.f);
-		tempInstance->Transform.Rotation.X = urd(dre);
-		tempInstance->Transform.Rotation.Y = urd(dre);
-		tempInstance->Transform.Rotation.Z = urd(dre);
+		tempInstance->Transform.Rotation.X = urd4W(dre);
+		tempInstance->Transform.Rotation.Y = urd4W(dre);
+		tempInstance->Transform.Rotation.Z = urd4W(dre);
 
 		tempInstance->invisible = 0;
 		asteroidActiveList.push_back(tempInstance);
 		asteroidInActiveList.erase(asteroidInActiveList.begin());
+		updateBound();
 	}
 }
 
@@ -244,6 +236,10 @@ void AsteroidsGame::updateBound()
 	//update bullets
 	for (std::vector<Bullet *>::iterator i = bulletList.begin(); i < bulletList.end(); ++i)
 	{
+		if ((*i)->invisible)
+		{
+			continue;
+		}
 		tempZ = static_cast<int>((*i)->Transform.Translation.Z);
 		(*i)->setBound(deriveBound(tempZ));
 	}
@@ -253,6 +249,8 @@ Vector4 AsteroidsGame::deriveBound(int z)
 {
 	//it works if camera has not rotated
 	//if camera translated along Z axis, just add camera.z to z
+	if (z != 0)
+		DEBUG_BREAK;
 	z -= Camera.Transform.Translation.Z;
 	float upBound = -z*tan(Game::Camera.FieldOfView/2);
 	Game::Camera.GetProjectionMatrix();
@@ -279,9 +277,9 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 		}
 
 		auto pAsteroid = *i;
-		pAsteroid->explode(t);
-		asteroidInActiveList.push_back(pAsteroid);
 		asteroidActiveList.erase(i);
+		asteroidInActiveList.push_back(pAsteroid);
+		pAsteroid->explode(t);
 
 		if (life - 1 >= 0)
 		{
@@ -311,9 +309,9 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 		auto pBullet = *i;
 		auto pAsteroid = *j;
 		pBullet->hide();
-		pAsteroid->explode(t);
-		asteroidInActiveList.push_back(pAsteroid);
 		asteroidActiveList.erase(j);
+		asteroidInActiveList.push_back(pAsteroid);
+		pAsteroid->explode(t);
 	}
 
 	if (asteroidActiveList.empty())
@@ -330,10 +328,9 @@ void AsteroidsGame::reset()
 		(*i)->hide();
 		asteroidInActiveList.push_back(*i);
 	}
-	for (auto i = 0; i < asteroidActiveList.size(); i++)
-	{
-		asteroidActiveList.erase(asteroidActiveList.begin());
-	}
+
+	asteroidActiveList.erase(asteroidActiveList.begin(),asteroidActiveList.end());
+
 	shipInstance->reborn();
 	score = 0;
 	life = initialLife;
