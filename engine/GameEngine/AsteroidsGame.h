@@ -42,9 +42,9 @@ public:
     
 private:
 	Ship *shipInstance;
-	vector<Asteroid*> asteroidActiveList; 
-	vector<Asteroid*> asteroidInActiveList;
-	vector<Bullet*> bulletList;
+	std::vector<Asteroid*> asteroidActiveList; 
+	std::vector<Asteroid*> asteroidInActiveList;
+	std::vector<Bullet*> bulletList;
 
 	static void window_size_callback(GLFWwindow* window, int width, int height);
 	void updateBound();

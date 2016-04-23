@@ -12,13 +12,14 @@
 #include <random>
 #include <ctime>
 
-using namespace std;
-
 #include "AsteroidsGame.h"
 #include "Mesh.h"
 #include "Material.h"
 #include "Files.h"
+#include "Sound.h"
+#include <future>
 
+using namespace std;
 
 bool AsteroidsGame::OnCreateScene()
 {
@@ -34,7 +35,6 @@ bool AsteroidsGame::OnCreateScene()
 	glfwSetWindowSizeCallback(m_window, window_size_callback);
 
     return true;
-    
 }
 
 Ship& AsteroidsGame::CreateShip()
@@ -260,6 +260,7 @@ Vector4 AsteroidsGame::deriveBound(int z)
 
 void AsteroidsGame::shipShot()
 {
+	sound.playFire();
 	showBullet(shipInstance->Transform.Translation, shipInstance->Transform.Rotation.Z);
 	Log::Info << "Ship shotted a bullet." << std::endl;
 }
@@ -286,6 +287,7 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 			asteroidActiveList.erase(i);
 			asteroidInActiveList.push_back(pAsteroid);
 			pAsteroid->explode(t);
+			sound.playExploding();
 			if (life - 1 >= 0)
 			{
 				life--;
@@ -311,6 +313,8 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 		{
 			continue;
 		}
+
+		sound.playExploding();
 
 		auto pBullet = *i;
 		auto pAsteroid = *j;
