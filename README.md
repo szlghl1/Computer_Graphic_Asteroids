@@ -2,7 +2,7 @@
 
 Project for SMU-CSE5382 Comuter Graphics
 
-Please place executing file, openal32.dll, folder "Shaders" in the same directory.
+Please place executing file, openal32.dll, folder "Shaders" and folder "sound" in the same directory.
 
 Press Enter to pause or start. Press + to add asteroid. When ships are out, you can press Enter to reset the game;
 
