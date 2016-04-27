@@ -322,6 +322,7 @@ void AsteroidsGame::collisionDetect(const GameTime t)
 		asteroidActiveList.erase(j);
 		asteroidInActiveList.push_back(pAsteroid);
 		pAsteroid->explode(t);
+		score += 20;
 	}
 
 	if (asteroidActiveList.empty())
